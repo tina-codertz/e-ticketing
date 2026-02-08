@@ -9,7 +9,6 @@ const TicketController = {
       res.status(500).json({ message: err.message });
     }
   },
-
   bookTickets: async (req, res) => {
     try {
       const { event_id, ticket_count } = req.body;
@@ -30,4 +29,4 @@ const TicketController = {
   }
 };
 
-module.exports = TicketController;
+export default TicketController;

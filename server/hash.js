@@ -1,5 +1,6 @@
 // server/generateHash.js
-const bcrypt = require('bcrypt');
+// const bcrypt = require('bcrypt');
+import bcrypt from 'bcrypt';
 
 const password = 'admin123'; // Replace with your desired password
 bcrypt.hash(password, 10, (err, hash) => {
