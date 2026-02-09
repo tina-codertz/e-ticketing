@@ -1,4 +1,4 @@
-const TicketService = require('../services/ticketService');
+ import TicketService from '../services/ticketService';
 
 const TicketController = {
   getAvailableTickets: async (req, res) => {
