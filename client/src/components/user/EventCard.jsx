@@ -2,15 +2,13 @@ import React from 'react';
 import { Calendar, MapPin, Clock, Ticket } from 'lucide-react';
 import { format } from 'date-fns';
 
-export const EventCard = ({ event, onViewDetails }) => {
+const EventCard = ({ event, onViewDetails }) => {
   const totalAvailable = event.ticketCategories.reduce(
     (sum, cat) => sum + cat.availableSeats,
     0
   );
 
-  const minPrice = Math.min(
-    ...event.ticketCategories.map(cat => cat.price)
-  );
+  const minPrice = Math.min(...event.ticketCategories.map(cat => cat.price));
 
   return (
     <div className="overflow-hidden rounded-xl border bg-white shadow-sm hover:shadow-lg transition-shadow">
@@ -27,9 +25,7 @@ export const EventCard = ({ event, onViewDetails }) => {
       <div className="p-4">
         <div className="mb-2 flex items-start justify-between">
           <div>
-            <h3 className="text-lg font-semibold line-clamp-1">
-              {event.title}
-            </h3>
+            <h3 className="text-lg font-semibold line-clamp-1">{event.title}</h3>
             <span className="mt-1 inline-block rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-700">
               {event.category}
             </span>
@@ -42,14 +38,12 @@ export const EventCard = ({ event, onViewDetails }) => {
           )}
         </div>
 
-        <p className="mb-3 text-sm text-gray-600 line-clamp-2">
-          {event.description}
-        </p>
+        <p className="mb-3 text-sm text-gray-600 line-clamp-2">{event.description}</p>
 
         <div className="space-y-1.5 text-sm text-gray-700">
           <div className="flex items-center">
             <Calendar className="mr-2 h-4 w-4 text-gray-500" />
-            {format(event.date, 'EEEE, MMMM d, yyyy')}
+            {format(new Date(event.date), 'EEEE, MMMM d, yyyy')}
           </div>
 
           <div className="flex items-center">
@@ -73,9 +67,7 @@ export const EventCard = ({ event, onViewDetails }) => {
       <div className="flex items-center justify-between p-4 pt-0">
         <div>
           <p className="text-xs text-gray-500">Starting from</p>
-          <p className="text-xl font-bold text-blue-600">
-            ${minPrice.toFixed(2)}
-          </p>
+          <p className="text-xl font-bold text-blue-600">${minPrice.toFixed(2)}</p>
         </div>
 
         <button
@@ -88,3 +80,5 @@ export const EventCard = ({ event, onViewDetails }) => {
     </div>
   );
 };
+
+export default EventCard;

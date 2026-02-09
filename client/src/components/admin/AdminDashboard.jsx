@@ -17,7 +17,7 @@ import {
 import { DollarSign, Ticket, Users, Calendar } from 'lucide-react';
 import { format, subDays } from 'date-fns';
 
-export const AdminDashboard = () => {
+export default function AdminDashboard() {
   const { events, bookings, users, tickets } = useApp();
 
   const totalRevenue = bookings

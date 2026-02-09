@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 
-export const EventDetail = ({ event, onBack, onBooking }) => {
+const EventDetail = ({ event, onBack, onBooking }) => {
   const [selectedTickets, setSelectedTickets] = useState({});
 
   const handleQuantityChange = (categoryId, change) => {
@@ -223,3 +223,4 @@ export const EventDetail = ({ event, onBack, onBooking }) => {
     </div>
   );
 };
+ export default EventDetail;

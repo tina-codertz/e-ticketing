@@ -4,7 +4,7 @@ import { Search, Eye, X } from 'lucide-react';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
 
-export const BookingManagement = () => {
+export default function BookingManagement() {
   const { bookings, users, cancelBooking } = useApp();
 
   const [searchTerm, setSearchTerm] = useState('');

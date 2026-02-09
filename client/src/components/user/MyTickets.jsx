@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 
-export const MyTickets = () => {
+const MyTickets = () => {
   const { currentUser, getUserTickets, getUserBookings, cancelBooking } = useApp();
 
   const [activeTab, setActiveTab] = useState('tickets');
@@ -285,3 +285,4 @@ export const MyTickets = () => {
     </div>
   );
 };
+export default MyTickets;

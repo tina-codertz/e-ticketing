@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Layout from './components/Layout';
+import Layout from './components/layout/layout';
 
 // Pages (adjust paths to match your project)
 import AuthForm from './components/auth/AuthForm';
@@ -9,8 +9,8 @@ import EventDetail from './components/user/EventDetail';
 import MyTickets from './components/user/MyTickets';
 import BookingFlow from './components/user/BookingFlow';
 import AdminDashboard from './components/admin/AdminDashboard';
-import { BookingManagement } from './components/admin/BookingManagement';
-import { UserManagement } from './components/admin/UserManagement';
+import  BookingManagement  from './components/admin/BookingManagement';
+import  UserManagement  from './components/admin/UserManagement';
 import EventManagement from './components/admin/EventManagement';
 
 
