@@ -3,6 +3,7 @@ import axios from 'axios';
 import io from 'socket.io-client';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaHome, FaTicketAlt, FaCalendarAlt, FaMapMarkerAlt, FaMoneyBillWave } from 'react-icons/fa';
+import Layout from '../layout/layout';
 
 const API_URL = 'http://localhost:3000/api';
 
@@ -31,7 +32,7 @@ function UserDashboard({ user, setUser }) {
           axios.get(`${API_URL}/tickets`, {
             headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
           }),
-          axios.get(`${API_URL}/user/bookings`, {
+          axios.get(`${API_URL}/bookings`, {
             headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
           }),
         ]);
@@ -187,17 +188,11 @@ function UserDashboard({ user, setUser }) {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-500 to-purple-600">
-      <div className="absolute top-4 left-4">
-        <Link to="/" className="flex items-center text-white hover:text-blue-200">
-          <FaHome className="w-5 h-5 mr-2" />
-          Back to Home
-        </Link>
-      </div>
+    <Layout user={user} setUser={setUser}>
       <div className="container mx-auto p-4">
         <div className="flex justify-between items-center mb-8">
-          <div className="flex items-center space-x-2">
-            <h2 className="text-3xl font-bold text-white">Welcome, {user.name}</h2>
+          <div className_="flex items-center space-x-2">
+            <h2 className="text-3xl font-bold text-gray-800">Welcome, {user.name}</h2>
             <FaTicketAlt className="w-6 h-6 text-white" />
           </div>
           <button
@@ -242,7 +237,7 @@ function UserDashboard({ user, setUser }) {
           </div>
         )}
       </div>
-    </div>
+    </Layout>
   );
 }
 

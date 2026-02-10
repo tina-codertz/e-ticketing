@@ -47,13 +47,13 @@ const Layout = ({ user, setUser }) => {
         <>
           <button
             className="w-full flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-100"
-            onClick={() => navigate('/user')}
+            onClick={() => navigate('/')}
           >
             <Calendar className="h-4 w-4" /> Events
           </button>
           <button
             className="w-full flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-100"
-            onClick={() => navigate('/user/tickets')}
+            onClick={() => navigate('/tickets')}
           >
             <Ticket className="h-4 w-4" /> My Tickets
           </button>
@@ -134,6 +134,7 @@ const Layout = ({ user, setUser }) => {
       </main>
     </div>
   );
-};
+}
+
 
 export default Layout;

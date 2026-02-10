@@ -12,6 +12,7 @@ import AdminDashboard from './components/admin/AdminDashboard';
 import  BookingManagement  from './components/admin/BookingManagement';
 import  UserManagement  from './components/admin/UserManagement';
 import EventManagement from './components/admin/EventManagement';
+import UserDashboard from './components/user/UserDashboard';
 
 
 const App = () => {
@@ -61,13 +62,9 @@ const App = () => {
           {/* User Routes */}
           {user?.role === 'user' && (
             <>
-              <Route index element={<UserEvents />} />
+              <Route index element={<UserDashboard />} />
               <Route path="booking" element={<BookingFlow />} />
               <Route path="tickets" element={<MyTickets />} />
-              <Route path="events-details" element={<EventDetail />} />
-              <Route path="events-card" element={<EventCard />} />
-
-
             </>
           )}
         </Route>
