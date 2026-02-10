@@ -1,76 +1,77 @@
+// App.jsx
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/layout/layout';
 
-// Pages (adjust paths to match your project)
+// Pages
 import AuthForm from './components/auth/AuthForm';
-import EventCard from './components/user/EventCard';
-import EventDetail from './components/user/EventDetail';
-import MyTickets from './components/user/MyTickets';
-import BookingFlow from './components/user/BookingFlow';
-import AdminDashboard from './components/admin/AdminDashboard';
-import  BookingManagement  from './components/admin/BookingManagement';
-import  UserManagement  from './components/admin/UserManagement';
-import EventManagement from './components/admin/EventManagement';
 import UserDashboard from './components/user/UserDashboard';
-
+import BookingFlow from './components/user/BookingFlow';
+import MyTickets from './components/user/MyTickets';
+import AdminDashboard from './components/admin/AdminDashboard';
+import BookingManagement from './components/admin/BookingManagement';
+import UserManagement from './components/admin/UserManagement';
+import EventManagement from './components/admin/EventManagement';
 
 const App = () => {
   const [user, setUser] = useState(null);
 
-  // Restore user from token/localStorage on refresh
   useEffect(() => {
     const token = localStorage.getItem('token');
     const storedUser = localStorage.getItem('user');
-
     if (token && storedUser) {
       setUser(JSON.parse(storedUser));
     }
   }, []);
 
+  // Optional: loading state while checking auth
+  if (user === undefined) return <div>Loading...</div>;
+
   return (
     <Router>
       <Routes>
-        {/* Public Route */}
+        {/* Login - redirect if already logged in */}
         <Route
           path="/login"
-          element={user ? <Navigate to="/" /> : <AuthForm setUser={setUser} />}
+          element={user ? <Navigate to="/" replace /> : <AuthForm setUser={setUser} />}
         />
 
-        {/* Protected Routes */}
+        {/* Protected routes - only shown when logged in */}
         <Route
-          path="/"
           element={
             user ? (
               <Layout user={user} setUser={setUser} />
             ) : (
-              <Navigate to="/login" />
+              <Navigate to="/login" replace />
             )
           }
         >
-          {/* Admin Routes */}
+          {/* Admin-only routes */}
           {user?.role === 'admin' && (
             <>
-              <Route index element={<AdminDashboard />} />
-              <Route path="admin" element={<AdminDashboard />} />
-              <Route path="booking-management" element={<BookingManagement />} />
-              <Route path="user-management" element={<UserManagement />} />
-              <Route path="event-management" element={<EventManagement />} />
+              <Route path="/" element={<AdminDashboard />} />
+              <Route path="/dashboard" element={<AdminDashboard />} />
+              <Route path="/bookings" element={<BookingManagement />} />
+              <Route path="/users" element={<UserManagement />} />
+              <Route path="/events" element={<EventManagement />} />
             </>
           )}
 
-          {/* User Routes */}
+          {/* User-only routes */}
           {user?.role === 'user' && (
             <>
-              <Route index element={<UserDashboard />} />
-              <Route path="booking" element={<BookingFlow />} />
-              <Route path="tickets" element={<MyTickets />} />
+              <Route path="/" element={<UserDashboard />} />
+              <Route path="/booking" element={<BookingFlow />} />
+              <Route path="/tickets" element={<MyTickets />} />
             </>
           )}
+
+          {/* Optional: fallback for logged-in users with invalid role */}
+          <Route path="*" element={<div>Access Denied or Page Not Found</div>} />
         </Route>
 
-        {/* Fallback */}
-        <Route path="*" element={<Navigate to="/" />} />
+        {/* Catch-all for everyone else */}
+        <Route path="*" element={<Navigate to={user ? '/' : '/login'} replace />} />
       </Routes>
     </Router>
   );

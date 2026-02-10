@@ -2,67 +2,72 @@ import React, { useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { Ticket, Calendar, Receipt, Users, LogOut, Menu, X } from 'lucide-react';
 
+// components/layout/layout.jsx
+// ... imports remain the same ...
+
 const Layout = ({ user, setUser }) => {
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('user'); // ← also clear user data
     setUser(null);
     navigate('/login');
   };
 
-  const renderNavButtons = () => {
-    if (user?.role === 'admin') {
-      return (
-        <>
-          <button
-            className="w-full flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-100"
-            onClick={() => navigate('/admin')}
-          >
-            <Calendar className="h-4 w-4" /> Dashboard
-          </button>
-          <button
-            className="w-full flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-100"
-            onClick={() => navigate('/admin/events')}
-          >
-            <Calendar className="h-4 w-4" /> Events
-          </button>
-          <button
-            className="w-full flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-100"
-            onClick={() => navigate('/admin/bookings')}
-          >
-            <Receipt className="h-4 w-4" /> Bookings
-          </button>
-          <button
-            className="w-full flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-100"
-            onClick={() => navigate('/admin/users')}
-          >
-            <Users className="h-4 w-4" /> Users
-          </button>
-        </>
-      );
-    } else {
-      return (
-        <>
-          <button
-            className="w-full flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-100"
-            onClick={() => navigate('/')}
-          >
-            <Calendar className="h-4 w-4" /> Events
-          </button>
-          <button
-            className="w-full flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-100"
-            onClick={() => navigate('/tickets')}
-          >
-            <Ticket className="h-4 w-4" /> My Tickets
-          </button>
-        </>
-      );
-    }
-  };
+const renderNavButtons = () => {
+  if (user?.role === 'admin') {
+    return (
+      <>
+        <button
+          className="w-full flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-100"
+          onClick={() => navigate('/dashboard')}
+        >
+          <Calendar className="h-4 w-4" /> Dashboard
+        </button>
+        <button
+          className="w-full flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-100"
+          onClick={() => navigate('/events')}
+        >
+          <Calendar className="h-4 w-4" /> Events
+        </button>
+        <button
+          className="w-full flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-100"
+          onClick={() => navigate('/bookings')}
+        >
+          <Receipt className="h-4 w-4" /> Bookings
+        </button>
+        <button
+          className="w-full flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-100"
+          onClick={() => navigate('/users')}
+        >
+          <Users className="h-4 w-4" /> Users
+        </button>
+      </>
+    );
+  }
 
+  // Regular user
   return (
+    <>
+      <button
+        className="w-full flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-100"
+        onClick={() => navigate('/')}
+      >
+        <Calendar className="h-4 w-4" /> Events
+      </button>
+      <button
+        className="w-full flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-100"
+        onClick={() => navigate('/tickets')}
+      >
+        <Ticket className="h-4 w-4" /> My Tickets
+      </button>
+    </>
+  );
+};
+
+return (
     <div className="min-h-screen flex bg-gray-50">
       {/* Sidebar */}
       <aside className="hidden lg:flex flex-col w-64 bg-white border-r p-4">
