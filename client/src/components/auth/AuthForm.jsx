@@ -120,7 +120,7 @@ const AuthForm = ({ setUser }) => {
               </svg>
             </div>
             <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              TicketFlow
+              e-ticket
             </h1>
           </div>
           <p className="text-gray-600">
@@ -244,13 +244,13 @@ const AuthForm = ({ setUser }) => {
           <div className="space-y-3">
             <button
               onClick={() => handleDemoLogin('user')}
-              className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 rounded-xl font-semibold hover:opacity-90 transition-opacity"
+              className="w-full bg-green-400 text-white py-3 rounded-xl font-semibold hover:opacity-90 transition-opacity"
             >
               Demo User Login
             </button>
             <button
               onClick={() => handleDemoLogin('admin')}
-              className="w-full bg-gradient-to-r from-purple-500 to-pink-600 text-white py-3 rounded-xl font-semibold hover:opacity-90 transition-opacity"
+              className="w-full bg-blue-400 text-white py-3 rounded-xl font-semibold hover:opacity-90 transition-opacity"
             >
               Demo Admin Login
             </button>

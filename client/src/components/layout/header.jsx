@@ -5,7 +5,7 @@ import { Menu, X, Search, Bell, Settings, User, LogOut } from 'lucide-react';
 
 const Header = ({ sidebarOpen, toggleSidebar, user, onLogout }) => {
   return (
-    <header className="sticky top-0 z-40 bg-white border-b shadow-sm">
+    <header className="sticky top-0 z-40 bg-white shadow-sm">
       <div className="flex items-center justify-between px-6 py-4">
         <div className="flex items-center gap-4">
           <button
