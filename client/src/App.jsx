@@ -1,7 +1,8 @@
 // App.jsx
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/layout/layout';
+import { useApp } from './context/AppContext';
 
 // Pages
 import AuthForm from './components/auth/AuthForm';
@@ -14,40 +15,29 @@ import UserManagement from './components/admin/UserManagement';
 import EventManagement from './components/admin/EventManagement';
 
 const App = () => {
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    const storedUser = localStorage.getItem('user');
-    if (token && storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-  }, []);
-
-  // Optional: loading state while checking auth
-  if (user === undefined) return <div>Loading...</div>;
+  const { currentUser } = useApp();
 
   return (
     <Router>
       <Routes>
-        {/* Login - redirect if already logged in */}
+        {/* Login - redirect to home if already logged in */}
         <Route
           path="/login"
-          element={user ? <Navigate to="/" replace /> : <AuthForm setUser={setUser} />}
+          element={currentUser ? <Navigate to="/" replace /> : <AuthForm />}
         />
 
-        {/* Protected routes - only shown when logged in */}
+        {/* Protected Routes */}
         <Route
           element={
-            user ? (
-              <Layout user={user} setUser={setUser} />
+            currentUser ? (
+              <Layout user={currentUser} />
             ) : (
               <Navigate to="/login" replace />
             )
           }
         >
-          {/* Admin-only routes */}
-          {user?.role === 'admin' && (
+          {/* Admin Routes */}
+          {currentUser?.role === 'admin' && (
             <>
               <Route path="/" element={<AdminDashboard />} />
               <Route path="/dashboard" element={<AdminDashboard />} />
@@ -57,8 +47,8 @@ const App = () => {
             </>
           )}
 
-          {/* User-only routes */}
-          {user?.role === 'user' && (
+          {/* User Routes */}
+          {currentUser?.role === 'user' && (
             <>
               <Route path="/" element={<UserDashboard />} />
               <Route path="/booking" element={<BookingFlow />} />
@@ -66,12 +56,12 @@ const App = () => {
             </>
           )}
 
-          {/* Optional: fallback for logged-in users with invalid role */}
-          <Route path="*" element={<div>Access Denied or Page Not Found</div>} />
+          {/* Fallback for unauthorized access or unhandled routes within protected area */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
 
-        {/* Catch-all for everyone else */}
-        <Route path="*" element={<Navigate to={user ? '/' : '/login'} replace />} />
+        {/* Global Catch-all */}
+        <Route path="*" element={<Navigate to={currentUser ? '/' : '/login'} replace />} />
       </Routes>
     </Router>
   );
