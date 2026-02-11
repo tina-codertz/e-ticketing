@@ -20,48 +20,31 @@ const App = () => {
   return (
     <Router>
       <Routes>
-        {/* Login - redirect to home if already logged in */}
+        {/* Login page - still redirects to home if already logged in */}
         <Route
           path="/login"
           element={currentUser ? <Navigate to="/" replace /> : <AuthForm />}
         />
 
-        {/* Protected Routes */}
-        <Route
-          element={
-            currentUser ? (
-              <Layout user={currentUser} />
-            ) : (
-              <Navigate to="/login" replace />
-            )
-          }
-        >
-          {/* Admin Routes */}
-          {currentUser?.role === 'admin' && (
-            <>
-              <Route path="/" element={<AdminDashboard />} />
-              <Route path="/dashboard" element={<AdminDashboard />} />
-              <Route path="/bookings" element={<BookingManagement />} />
-              <Route path="/users" element={<UserManagement />} />
-              <Route path="/events" element={<EventManagement />} />
-            </>
-          )}
+        {/* All pages are now publicly accessible */}
+        <Route element={<Layout user={currentUser} />}>
+          {/* Admin Routes - visible to everyone now */}
+          <Route path="/" element={<AdminDashboard />} />
+          <Route path="/dashboard" element={<AdminDashboard />} />
+          <Route path="/bookings" element={<BookingManagement />} />
+          <Route path="/users" element={<UserManagement />} />
+          <Route path="/events" element={<EventManagement />} />
 
-          {/* User Routes */}
-          {currentUser?.role === 'user' && (
-            <>
-              <Route path="/" element={<UserDashboard />} />
-              <Route path="/booking" element={<BookingFlow />} />
-              <Route path="/tickets" element={<MyTickets />} />
-            </>
-          )}
+          {/* User Routes - visible to everyone now */}
+          <Route path="/booking" element={<BookingFlow />} />
+          <Route path="/tickets" element={<MyTickets />} />
 
-          {/* Fallback for unauthorized access or unhandled routes within protected area */}
+          {/* Optional: redirect unknown paths to home */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
 
-        {/* Global Catch-all */}
-        <Route path="*" element={<Navigate to={currentUser ? '/' : '/login'} replace />} />
+        {/* Optional global catch-all (can be removed if you prefer 404 page later) */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
   );
