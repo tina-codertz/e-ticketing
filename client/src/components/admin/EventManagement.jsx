@@ -1,7 +1,7 @@
 // EventManagement.jsx
 import React, { useState, useMemo, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
-import { Plus, Edit, Trash2, Calendar, Image as ImageIcon, Star, Upload, X, Eye } from 'lucide-react';
+import { Plus, Edit, Trash2, Calendar, Image as ImageIcon, Star, Upload, X, Eye, Search } from 'lucide-react';
 import { format, addDays } from 'date-fns';
 import { toast } from 'sonner';
 import ReactQuill from 'react-quill';

@@ -1,7 +1,7 @@
 // UserManagement.jsx
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
-import { Search, Eye, Trash2, UserPlus, Mail, Phone, Shield, UserCheck, UserX, Download } from 'lucide-react';
+import { Search, Eye, Trash2, UserPlus, Mail, Phone, Shield, UserCheck, UserX, Download, DollarSign, Filter } from 'lucide-react';
 import { format, subMonths } from 'date-fns';
 import { toast } from 'sonner';
 
