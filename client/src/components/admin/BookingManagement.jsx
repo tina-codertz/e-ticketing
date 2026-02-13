@@ -1,12 +1,17 @@
 // BookingManagement.jsx
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Search, Eye, X, Filter, Download, MoreVertical, Ticket } from 'lucide-react';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
 
 export default function BookingManagement() {
-  const { bookings, users, cancelBooking, updateBookingStatus } = useApp();
+  const { bookings, users, cancelBooking, updateBookingStatus, loadDataFromAPI } = useApp();
+
+  // Load data on mount
+  useEffect(() => {
+    loadDataFromAPI();
+  }, []);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -231,16 +236,30 @@ export default function BookingManagement() {
                       <td className="px-6 py-4">
                         <div>
                           <p className="font-mono text-sm font-semibold text-gray-900">
-                            {booking.id.slice(-8)}
+                            {String(booking.id).slice(-8)}
                           </p>
                           <p className="text-sm font-medium text-gray-900 mt-1">
                             {booking.eventTitle}
                           </p>
                           <p className="text-xs text-gray-500 mt-1">
-                            {format(booking.eventDate, 'MMM d, yyyy')}
+                            {booking.eventDate ? (() => {
+                              try {
+                                const date = new Date(booking.eventDate);
+                                return isNaN(date.getTime()) ? 'N/A' : format(date, 'MMM d, yyyy');
+                              } catch {
+                                return 'N/A';
+                              }
+                            })() : 'N/A'}
                           </p>
                           <p className="text-xs text-gray-400 mt-1">
-                            {format(booking.bookingDate, 'MMM d, yyyy h:mm a')}
+                            {booking.bookingDate ? (() => {
+                              try {
+                                const date = new Date(booking.bookingDate);
+                                return isNaN(date.getTime()) ? 'N/A' : format(date, 'MMM d, yyyy h:mm a');
+                              } catch {
+                                return 'N/A';
+                              }
+                            })() : 'N/A'}
                           </p>
                         </div>
                       </td>
@@ -374,13 +393,27 @@ export default function BookingManagement() {
                     <div className="flex justify-between">
                       <span className="text-gray-600">Booking Date</span>
                       <span className="font-medium">
-                        {format(selectedBooking.bookingDate, 'MMM d, yyyy h:mm a')}
+                        {selectedBooking.bookingDate ? (() => {
+                          try {
+                            const date = new Date(selectedBooking.bookingDate);
+                            return isNaN(date.getTime()) ? 'N/A' : format(date, 'MMM d, yyyy h:mm a');
+                          } catch {
+                            return 'N/A';
+                          }
+                        })() : 'N/A'}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-600">Event Date</span>
                       <span className="font-medium">
-                        {format(selectedBooking.eventDate, 'MMM d, yyyy')}
+                        {selectedBooking.eventDate ? (() => {
+                          try {
+                            const date = new Date(selectedBooking.eventDate);
+                            return isNaN(date.getTime()) ? 'N/A' : format(date, 'MMM d, yyyy');
+                          } catch {
+                            return 'N/A';
+                          }
+                        })() : 'N/A'}
                       </span>
                     </div>
                     <div className="flex justify-between">

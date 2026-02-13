@@ -1,5 +1,5 @@
 // AdminDashboard.jsx
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import {
   BarChart,
@@ -20,7 +20,12 @@ import { DollarSign, Ticket, Users, Calendar, TrendingUp, TrendingDown } from 'l
 import { format, subDays, isAfter } from 'date-fns';
 
 export default function AdminDashboard() {
-  const { events, bookings, users, tickets } = useApp();
+  const { events, bookings, users, tickets, loadDataFromAPI } = useApp();
+
+  // Load data on mount
+  useEffect(() => {
+    loadDataFromAPI();
+  }, []);
 
   // Memoized calculations for better performance
   const stats = useMemo(() => {

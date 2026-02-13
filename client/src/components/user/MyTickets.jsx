@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { QRCodeSVG } from 'qrcode.react';
 import {
@@ -12,7 +12,14 @@ import {
 import { format } from 'date-fns';
 
 const MyTickets = () => {
-  const { currentUser, getUserTickets, getUserBookings, cancelBooking } = useApp();
+  const { currentUser, getUserTickets, getUserBookings, cancelBooking, loadDataFromAPI } = useApp();
+
+  // Load data on mount
+  useEffect(() => {
+    if (currentUser) {
+      loadDataFromAPI();
+    }
+  }, [currentUser]);
 
   const [activeTab, setActiveTab] = useState('tickets');
   const [selectedTicket, setSelectedTicket] = useState(null);
@@ -129,7 +136,7 @@ const MyTickets = () => {
                   <div className="mt-3 flex justify-between text-xs text-gray-500">
                     <span>Ticket ID</span>
                     <span className="font-mono">
-                      {ticket.id.slice(-8)}
+                      {String(ticket.id).slice(-8)}
                     </span>
                   </div>
                 </div>

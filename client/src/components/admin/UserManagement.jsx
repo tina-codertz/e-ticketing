@@ -1,12 +1,17 @@
 // UserManagement.jsx
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Search, Eye, Trash2, UserPlus, Mail, Phone, Shield, UserCheck, UserX, Download, DollarSign, Filter } from 'lucide-react';
 import { format, subMonths } from 'date-fns';
 import { toast } from 'sonner';
 
 const UserManagement = () => {
-  const { users, deleteUser, getUserBookings, updateUserRole } = useApp();
+  const { users, deleteUser, getUserBookings, updateUserRole, loadDataFromAPI } = useApp();
+
+  // Load data on mount
+  useEffect(() => {
+    loadDataFromAPI();
+  }, []);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
@@ -46,7 +51,14 @@ const UserManagement = () => {
       totalBookings: userBookings.length,
       totalSpent,
       monthlyAvg,
-      lastBooking: userBookings[0] ? format(new Date(userBookings[0].bookingDate), 'MMM d, yyyy') : 'Never'
+      lastBooking: userBookings[0] && userBookings[0].bookingDate ? (() => {
+        try {
+          const date = new Date(userBookings[0].bookingDate);
+          return isNaN(date.getTime()) ? 'Never' : format(date, 'MMM d, yyyy');
+        } catch {
+          return 'Never';
+        }
+      })() : 'Never'
     };
   };
 
@@ -340,9 +352,16 @@ const UserManagement = () => {
                                 <Shield className="h-4 w-4 text-purple-500" />
                               )}
                             </div>
-                            <p className="text-sm text-gray-500">ID: {user.id.slice(-8)}</p>
+                            <p className="text-sm text-gray-500">ID: {String(user.id).slice(-8)}</p>
                             <p className="text-xs text-gray-400">
-                              Joined {format(new Date(user.createdAt), 'MMM d, yyyy')}
+                              Joined {user.createdAt ? (() => {
+                                try {
+                                  const date = new Date(user.createdAt);
+                                  return isNaN(date.getTime()) ? 'N/A' : format(date, 'MMM d, yyyy');
+                                } catch {
+                                  return 'N/A';
+                                }
+                              })() : 'N/A'}
                             </p>
                           </div>
                         </div>
@@ -480,7 +499,14 @@ const UserManagement = () => {
                     <div>
                       <p className="text-sm text-gray-500">Member Since</p>
                       <p className="font-medium">
-                        {format(new Date(selectedUser.createdAt), 'MMMM d, yyyy')}
+                        {selectedUser.createdAt ? (() => {
+                          try {
+                            const date = new Date(selectedUser.createdAt);
+                            return isNaN(date.getTime()) ? 'N/A' : format(date, 'MMMM d, yyyy');
+                          } catch {
+                            return 'N/A';
+                          }
+                        })() : 'N/A'}
                       </p>
                     </div>
                   </div>
@@ -541,7 +567,14 @@ const UserManagement = () => {
                           <div>
                             <p className="font-semibold text-gray-900">{booking.eventTitle}</p>
                             <p className="text-sm text-gray-500">
-                              {format(new Date(booking.bookingDate), 'MMM d, yyyy')}
+                              {booking.bookingDate ? (() => {
+                                try {
+                                  const date = new Date(booking.bookingDate);
+                                  return isNaN(date.getTime()) ? 'N/A' : format(date, 'MMM d, yyyy');
+                                } catch {
+                                  return 'N/A';
+                                }
+                              })() : 'N/A'}
                             </p>
                           </div>
                           <span className={`px-3 py-1 rounded-full text-xs font-medium ${

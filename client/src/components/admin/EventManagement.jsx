@@ -1,14 +1,18 @@
 // EventManagement.jsx
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Plus, Edit, Trash2, Calendar, Image as ImageIcon, Star, Upload, X, Eye, Search } from 'lucide-react';
 import { format, addDays } from 'date-fns';
 import { toast } from 'sonner';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+// Removed ReactQuill - using textarea instead (ReactQuill incompatible with React 19)
 
 const EventManagement = () => {
-  const { events, addEvent, updateEvent, deleteEvent, bookings } = useApp();
+  const { events, addEvent, updateEvent, deleteEvent, bookings, loadDataFromAPI } = useApp();
+
+  // Load data on mount
+  useEffect(() => {
+    loadDataFromAPI();
+  }, []);
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState(null);
@@ -235,7 +239,7 @@ const EventManagement = () => {
     }
   };
 
-  const handleDeleteEvent = (eventId) => {
+  const handleDeleteEvent = async (eventId) => {
     const eventBookings = bookings.filter(b => b.eventId === eventId);
     
     if (eventBookings.length > 0) {
@@ -244,8 +248,14 @@ const EventManagement = () => {
     }
 
     if (window.confirm('Are you sure you want to delete this event? This action cannot be undone.')) {
-      deleteEvent(eventId);
-      toast.success('Event deleted successfully');
+      try {
+        await deleteEvent(eventId);
+        toast.success('Event deleted successfully');
+        await loadDataFromAPI(); // Reload events
+      } catch (error) {
+        console.error('Error deleting event:', error);
+        toast.error(error.message || 'Failed to delete event. It may have active bookings.');
+      }
     }
   };
 
@@ -260,15 +270,7 @@ const EventManagement = () => {
     return { totalSeats, soldSeats, revenue, percentage: (soldSeats / totalSeats) * 100 };
   };
 
-  const modules = {
-    toolbar: [
-      [{ 'header': [1, 2, 3, false] }],
-      ['bold', 'italic', 'underline', 'strike'],
-      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-      ['link', 'image'],
-      ['clean']
-    ],
-  };
+  // Removed ReactQuill modules - using textarea instead
 
   return (
     <div className="space-y-6">
@@ -720,13 +722,16 @@ const EventManagement = () => {
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Description
                       </label>
-                      <ReactQuill
+                      <textarea
                         value={formData.description}
-                        onChange={(content) => setFormData({ ...formData, description: content })}
-                        modules={modules}
-                        theme="snow"
-                        className="rounded-lg border border-gray-300"
+                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                        rows={6}
+                        className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-y"
+                        placeholder="Enter event description..."
                       />
+                      <p className="text-xs text-gray-500 mt-1">
+                        You can use plain text or basic formatting
+                      </p>
                     </div>
 
                     {/* Venue & Location */}

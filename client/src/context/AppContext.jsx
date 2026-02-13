@@ -5,7 +5,7 @@ import { ticketsAPI, adminAPI, authAPI } from '../services/api';
 
 const AppContext = createContext(undefined);
 
-// Mock data for initial state
+// // Mock data for initial state
 const initialUsers = [
   {
     id: 'user-1',
@@ -152,8 +152,22 @@ export const AppProvider = ({ children }) => {
       const token = localStorage.getItem('token');
       if (!token) return;
 
-      // Fetch available tickets/events
-      const eventsData = await ticketsAPI.getAvailableTickets();
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      const isAdmin = user.role === 'admin';
+
+      // Fetch events - use admin API if admin, otherwise user API
+      let eventsData = [];
+      try {
+        if (isAdmin) {
+          eventsData = await adminAPI.getAllTickets(); // Gets all events
+        } else {
+          eventsData = await ticketsAPI.getAvailableTickets();
+        }
+      } catch (error) {
+        console.error('Error fetching events:', error);
+        eventsData = [];
+      }
+
       // Transform backend events to frontend format
       const transformedEvents = eventsData.map(event => ({
         id: event.event_id,
@@ -177,26 +191,48 @@ export const AppProvider = ({ children }) => {
       setEvents(transformedEvents);
 
       // Fetch user bookings
-      const bookingsData = await ticketsAPI.getUserBookings();
-      // Transform backend bookings to frontend format
-      const transformedBookings = bookingsData.map(booking => ({
-        id: booking.booking_id,
-        userId: booking.user_id,
-        eventId: booking.event_id,
-        eventTitle: booking.event_name,
-        eventDate: new Date(booking.event_date || booking.booking_time),
-        eventVenue: booking.event_location || '',
-        items: [{
-          categoryId: `cat-${booking.event_id}`,
-          categoryName: 'Standard Ticket',
-          quantity: booking.ticket_count,
-          price: parseFloat(booking.price) || 0
-        }],
-        totalAmount: (parseFloat(booking.price) || 0) * booking.ticket_count,
-        status: booking.status || 'confirmed',
-        bookingDate: new Date(booking.booking_time)
-      }));
-      setBookings(transformedBookings);
+      try {
+        const bookingsData = await ticketsAPI.getUserBookings();
+        // Transform backend bookings to frontend format
+        const transformedBookings = bookingsData.map(booking => ({
+          id: booking.booking_id,
+          userId: booking.user_id,
+          eventId: booking.event_id,
+          eventTitle: booking.event_name,
+          eventDate: new Date(booking.event_date || booking.booking_time),
+          eventVenue: booking.event_location || '',
+          items: [{
+            categoryId: `cat-${booking.event_id}`,
+            categoryName: 'Standard Ticket',
+            quantity: booking.ticket_count,
+            price: parseFloat(booking.price) || 0
+          }],
+          totalAmount: (parseFloat(booking.price) || 0) * booking.ticket_count,
+          status: booking.status || 'confirmed',
+          bookingDate: new Date(booking.booking_time)
+        }));
+        setBookings(transformedBookings);
+      } catch (error) {
+        console.error('Error fetching bookings:', error);
+      }
+
+      // Fetch users if admin
+      if (isAdmin) {
+        try {
+          const usersData = await adminAPI.getAllUsers();
+          const transformedUsers = usersData.map(user => ({
+            id: user.user_id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            createdAt: new Date(user.created_at),
+            avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name || user.email}`
+          }));
+          setUsers(transformedUsers);
+        } catch (error) {
+          console.error('Error fetching users:', error);
+        }
+      }
     } catch (error) {
       console.error('Error loading data from API:', error);
     }
@@ -270,33 +306,67 @@ export const AppProvider = ({ children }) => {
   };
 
   // Event functions
-  const addEvent = (eventData) => {
-    const newEvent = {
-      ...eventData,
-      id: `event-${uuidv4()}`,
-      createdAt: new Date()
-    };
-    setEvents(prev => [...prev, newEvent]);
-    return newEvent;
+  const addEvent = async (eventData) => {
+    try {
+      // Backend expects: name, date, location, total_tickets, price
+      // Frontend has: title, date, venue, ticketCategories
+      const firstCategory = eventData.ticketCategories?.[0] || { totalSeats: 100, price: 50 };
+      const eventDate = eventData.date instanceof Date ? eventData.date.toISOString() : eventData.date;
+      
+      await adminAPI.addEvent({
+        name: eventData.title,
+        date: eventDate,
+        location: eventData.venue,
+        total_tickets: firstCategory.totalSeats,
+        price: firstCategory.price
+      });
+      
+      // Reload events from API
+      await loadDataFromAPI();
+      
+      return { success: true };
+    } catch (error) {
+      console.error('Error adding event:', error);
+      throw error;
+    }
   };
 
-  const updateEvent = (id, data) => {
+  const updateEvent = async (id, data) => {
+    // Backend doesn't have update endpoint, so we'll update locally
+    // In production, you'd want to add an update endpoint
     setEvents(prev => prev.map(event => 
       event.id === id ? { ...event, ...data } : event
     ));
+    return { success: true };
   };
 
-  const deleteEvent = (id) => {
-    setEvents(prev => prev.filter(event => event.id !== id));
+  const deleteEvent = async (id) => {
+    try {
+      await adminAPI.deleteEvent(id);
+      // Reload events from API
+      await loadDataFromAPI();
+      return { success: true };
+    } catch (error) {
+      console.error('Error deleting event:', error);
+      // Extract error message from response
+      const errorMessage = error.response?.data?.message || error.message || 'Failed to delete event';
+      throw new Error(errorMessage);
+    }
   };
 
   // Booking functions
   const addBooking = async (bookingData) => {
     try {
-      // Call API to create booking
-      const result = await ticketsAPI.bookTickets(bookingData.eventId, bookingData.items[0].quantity);
+      // Ensure we have the required data
+      if (!bookingData.eventId || !bookingData.items || bookingData.items.length === 0) {
+        throw new Error('Invalid booking data');
+      }
+
+      // Call API to create booking - backend expects event_id and ticket_count
+      const ticketCount = bookingData.items.reduce((sum, item) => sum + item.quantity, 0);
+      const result = await ticketsAPI.bookTickets(bookingData.eventId, ticketCount);
       
-      // Reload bookings from API
+      // Reload bookings and events from API to get updated data
       await loadDataFromAPI();
       
       return result;
@@ -306,14 +376,18 @@ export const AppProvider = ({ children }) => {
     }
   };
 
-  const updateBookingStatus = (id, status) => {
+  const updateBookingStatus = async (id, status) => {
+    // Backend doesn't have update booking status endpoint
+    // Update locally for now - in production, add API endpoint
     setBookings(prev => prev.map(booking => 
       booking.id === id ? { ...booking, status } : booking
     ));
+    // Reload to sync with backend
+    await loadDataFromAPI();
   };
 
-  const cancelBooking = (id) => {
-    updateBookingStatus(id, 'cancelled');
+  const cancelBooking = async (id) => {
+    await updateBookingStatus(id, 'cancelled');
   };
 
   const getUserBookings = (userId) => {
@@ -348,7 +422,9 @@ export const AppProvider = ({ children }) => {
   };
 
   // User management functions
-  const updateUser = (id, data) => {
+  const updateUser = async (id, data) => {
+    // Backend doesn't have update user endpoint
+    // Update locally for now
     setUsers(prev => prev.map(user => 
       user.id === id ? { ...user, ...data } : user
     ));
@@ -356,13 +432,24 @@ export const AppProvider = ({ children }) => {
     if (currentUser?.id === id) {
       setCurrentUser(prev => ({ ...prev, ...data }));
     }
+    
+    // Reload users from API
+    await loadDataFromAPI();
   };
 
-  const deleteUser = (id) => {
+  const updateUserRole = async (userId, newRole) => {
+    await updateUser(userId, { role: newRole });
+  };
+
+  const deleteUser = async (id) => {
+    // Backend doesn't have delete user endpoint
+    // Update locally for now - in production, add API endpoint
     setUsers(prev => prev.filter(user => user.id !== id));
     if (currentUser?.id === id) {
       setCurrentUser(null);
     }
+    // Reload users from API
+    await loadDataFromAPI();
   };
 
   // Ticket availability
@@ -414,6 +501,7 @@ export const AppProvider = ({ children }) => {
     getUserTickets,
     
     updateUser,
+    updateUserRole,
     deleteUser,
     
     updateTicketAvailability,
