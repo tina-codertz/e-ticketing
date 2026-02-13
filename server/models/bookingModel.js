@@ -10,7 +10,21 @@ const BookingModel = {
 
   getUserBookings: async (userId) => {
     const result = await pool.query(
-      'SELECT b.booking_id, b.ticket_count, b.booking_time, e.name as event_name FROM bookings b JOIN events e ON b.event_id = e.event_id WHERE b.user_id = $1',
+      `SELECT 
+        b.booking_id, 
+        b.user_id,
+        b.event_id,
+        b.ticket_count, 
+        b.booking_time,
+        b.status,
+        e.name as event_name,
+        e.date as event_date,
+        e.location as event_location,
+        e.price
+      FROM bookings b 
+      JOIN events e ON b.event_id = e.event_id 
+      WHERE b.user_id = $1
+      ORDER BY b.booking_time DESC`,
       [userId]
     );
     return result.rows;

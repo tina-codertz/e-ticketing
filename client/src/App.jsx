@@ -30,7 +30,7 @@ const App = () => {
         <Route
           element={
             currentUser ? (
-              <Layout user={null} />
+              <Layout />
             ) : (
               <Navigate to="/login" replace />
             )

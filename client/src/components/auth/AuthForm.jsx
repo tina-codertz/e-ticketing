@@ -1,12 +1,14 @@
 // components/auth/AuthForm.jsx
 import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, User, Phone } from 'lucide-react';
 import { toast } from 'sonner';
+import { authAPI } from '../../services/api';
+import { useApp } from '../../context/AppContext';
 
-const AuthForm = ({ setUser }) => {
+const AuthForm = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const { setCurrentUser } = useApp();
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -17,94 +19,81 @@ const AuthForm = ({ setUser }) => {
     phone: ''
   });
 
-  // Mock authentication - replace with actual API calls
-  const mockUsers = [
-    { 
-      id: 'user-1', 
-      email: 'user@example.com', 
-      password: 'password123', 
-      name: 'John Doe', 
-      phone: '+1234567890', 
-      role: 'user',
-      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=John'
-    },
-    { 
-      id: 'admin-1', 
-      email: 'admin@example.com', 
-      password: 'admin123', 
-      name: 'Admin User', 
-      phone: '+1234567890', 
-      role: 'admin',
-      avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Admin'
-    }
-  ];
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
       if (isLogin) {
-        const user = mockUsers.find(
-          u => u.email === formData.email && u.password === formData.password
-        );
+        const response = await authAPI.login(formData.email, formData.password);
+        const { token, user } = response;
         
-        if (!user) {
-          throw new Error('Invalid email or password');
-        }
-
-        // Store user data (in real app, you'd get token from API)
-        const userData = { ...user, password: undefined };
-        localStorage.setItem('token', 'mock-jwt-token');
+        // Store token and user data
+        localStorage.setItem('token', token);
+        const userData = {
+          ...user,
+          id: user.user_id,
+          avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name || user.email}`
+        };
         localStorage.setItem('user', JSON.stringify(userData));
-        setUser(userData);
+        setCurrentUser(userData);
         
         toast.success(`Welcome back, ${user.name}!`);
         navigate(user.role === 'admin' ? '/dashboard' : '/');
       } else {
-        // Registration logic
-        const existingUser = mockUsers.find(u => u.email === formData.email);
-        if (existingUser) {
-          throw new Error('User already exists with this email');
-        }
-
-        const newUser = {
-          id: `user-${Date.now()}`,
-          email: formData.email,
-          name: formData.name,
-          phone: formData.phone,
-          role: 'user',
-          avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${formData.name}`,
-          createdAt: new Date().toISOString()
+        const response = await authAPI.register(formData.name, formData.email, formData.password);
+        const { token, user } = response;
+        
+        // Store token and user data
+        localStorage.setItem('token', token);
+        const userData = {
+          ...user,
+          id: user.user_id,
+          avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name || user.email}`
         };
-
-        // Store user data
-        localStorage.setItem('token', 'mock-jwt-token');
-        localStorage.setItem('user', JSON.stringify(newUser));
-        setUser(newUser);
+        localStorage.setItem('user', JSON.stringify(userData));
+        setCurrentUser(userData);
         
         toast.success('Account created successfully!');
         navigate('/');
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.response?.data?.message || error.message || 'An error occurred');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleDemoLogin = (role) => {
-    const demoUser = mockUsers.find(u => u.role === role);
-    if (demoUser) {
-      const userData = { ...demoUser, password: undefined };
-      localStorage.setItem('token', 'mock-jwt-token');
+  const handleDemoLogin = async (role) => {
+    // Demo login - using test credentials
+    const demoCredentials = {
+      user: { email: 'user@example.com', password: 'password123' },
+      admin: { email: 'admin@example.com', password: 'admin123' }
+    };
+    
+    const creds = demoCredentials[role];
+    if (!creds) return;
+    
+    setLoading(true);
+    try {
+      const response = await authAPI.login(creds.email, creds.password);
+      const { token, user } = response;
+      
+      localStorage.setItem('token', token);
+      const userData = {
+        ...user,
+        id: user.user_id,
+        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name || user.email}`
+      };
       localStorage.setItem('user', JSON.stringify(userData));
-      setUser(userData);
-      toast.success(`Signed in as ${demoUser.name}`);
-      navigate(demoUser.role === 'admin' ? '/dashboard' : '/');
+      setCurrentUser(userData);
+      
+      toast.success(`Signed in as ${user.name}`);
+      navigate(user.role === 'admin' ? '/dashboard' : '/');
+    } catch (error) {
+      toast.error('Demo login failed. Please register or use valid credentials.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -244,13 +233,15 @@ const AuthForm = ({ setUser }) => {
           <div className="space-y-3">
             <button
               onClick={() => handleDemoLogin('user')}
-              className="w-full bg-green-400 text-white py-3 rounded-xl font-semibold hover:opacity-90 transition-opacity"
+              disabled={loading}
+              className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 rounded-xl font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
             >
               Demo User Login
             </button>
             <button
               onClick={() => handleDemoLogin('admin')}
-              className="w-full bg-blue-400 text-white py-3 rounded-xl font-semibold hover:opacity-90 transition-opacity"
+              disabled={loading}
+              className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-3 rounded-xl font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
             >
               Demo Admin Login
             </button>

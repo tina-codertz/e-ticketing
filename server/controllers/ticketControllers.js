@@ -1,4 +1,4 @@
- import TicketService from '../services/ticketService';
+const TicketService = require('../services/ticketService');
 
 const TicketController = {
   getAvailableTickets: async (req, res) => {
@@ -29,4 +29,4 @@ const TicketController = {
   }
 };
 
-export default TicketController;
+module.exports = TicketController;

@@ -10,8 +10,7 @@ function UserDashboard() {
     bookings: allBookings,
     events,
     addBooking,
-    updateTicketAvailability,
-    generateTickets
+    loadDataFromAPI
   } = useApp();
 
   const [ticketQuantities, setTicketQuantities] = useState({});
@@ -48,86 +47,114 @@ function UserDashboard() {
         }],
         totalAmount: category.price * ticketCount,
         status: 'confirmed',
-        paymentMethod: 'Credit Card', // Mock
+        paymentMethod: 'Credit Card',
       };
 
-      const newBooking = addBooking(BookingData);
+      await addBooking(BookingData);
 
-      // Update availability
-      updateTicketAvailability(event.id, category.id, -ticketCount);
-
-      // Generate tickets
-      generateTickets(newBooking);
+      // Reload events to get updated availability
+      await loadDataFromAPI();
 
       toast.success('Booking successful!');
       setTicketQuantities((prev) => ({ ...prev, [qtyKey]: 1 }));
 
     } catch (err) {
-      toast.error('Booking failed');
+      toast.error(err.response?.data?.message || err.message || 'Booking failed');
       console.error(err);
     }
   };
 
   const EventCard = ({ event }) => (
-    <div className="card bg-white rounded-xl shadow-md p-4 mb-4">
-      <div className="flex items-center justify-between mb-4">
-        <h4 className="text-xl font-bold text-gray-800">{event.title}</h4>
-        <div className="text-sm text-gray-500">
-          <FaCalendarAlt className="inline mr-1" />
-          {new Date(event.date).toLocaleDateString()}
-        </div>
-      </div>
-
-      <div className="space-y-4">
-        {event.ticketCategories.map(cat => (
-          <div key={cat.id} className="border-t pt-2">
-            <div className="flex justify-between items-center mb-2">
-              <span className="font-semibold">{cat.name}</span>
-              <span className="text-green-600 font-bold">TZS {cat.price}</span>
-            </div>
-            <div className="flex justify-between items-center text-sm text-gray-600 mb-2">
-              <span>Available: {cat.availableSeats}</span>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <input
-                type="number"
-                min="1"
-                max={cat.availableSeats}
-                value={ticketQuantities[`${event.id}-${cat.id}`] || 1}
-                onChange={(e) => handleQuantityChange(event.id, cat.id, e.target.value, cat.availableSeats)}
-                className="w-20 px-2 py-1 border rounded"
-                disabled={cat.availableSeats === 0}
-              />
-              <button
-                onClick={() => handleBook(event, cat)}
-                className="flex-1 bg-blue-500 text-white py-1 rounded hover:bg-blue-600 disabled:opacity-50"
-                disabled={cat.availableSeats === 0}
-              >
-                Book
-              </button>
+    <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100">
+      <div className="p-6">
+        <div className="flex items-start justify-between mb-4">
+          <div className="flex-1">
+            <h4 className="text-xl font-bold text-gray-800 mb-2">{event.title}</h4>
+            <div className="flex items-center gap-4 text-sm text-gray-600">
+              <div className="flex items-center gap-1">
+                <FaCalendarAlt className="text-blue-500" />
+                <span>{new Date(event.date).toLocaleDateString()}</span>
+              </div>
+              {event.venue && (
+                <div className="flex items-center gap-1">
+                  <FaMapMarkerAlt className="text-purple-500" />
+                  <span>{event.venue}</span>
+                </div>
+              )}
             </div>
           </div>
-        ))}
+        </div>
+
+        <div className="space-y-4">
+          {event.ticketCategories?.map(cat => (
+            <div key={cat.id} className="border-t border-gray-100 pt-4">
+              <div className="flex justify-between items-center mb-3">
+                <span className="font-semibold text-gray-800">{cat.name}</span>
+                <span className="text-lg font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  ${cat.price?.toFixed(2) || '0.00'}
+                </span>
+              </div>
+              <div className="flex justify-between items-center text-sm mb-3">
+                <span className="text-gray-600">Available: <span className="font-semibold text-gray-800">{cat.availableSeats}</span></span>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <input
+                  type="number"
+                  min="1"
+                  max={cat.availableSeats}
+                  value={ticketQuantities[`${event.id}-${cat.id}`] || 1}
+                  onChange={(e) => handleQuantityChange(event.id, cat.id, e.target.value, cat.availableSeats)}
+                  className="w-24 px-3 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  disabled={cat.availableSeats === 0}
+                />
+                <button
+                  onClick={() => handleBook(event, cat)}
+                  className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 px-4 rounded-xl font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg transition-shadow"
+                  disabled={cat.availableSeats === 0}
+                >
+                  Book Now
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
 
   const BookingCard = ({ booking }) => (
-    <div className="p-4 border-b last:border-0">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          <FaTicketAlt className="w-5 h-5 text-blue-500" />
-          <span className="font-semibold text-gray-800">{booking.eventTitle}</span>
+    <div className="p-5 bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow border border-gray-100">
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-3">
+          <div className="h-10 w-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+            <FaTicketAlt className="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <span className="font-semibold text-gray-800 block">{booking.eventTitle}</span>
+            <span className="text-xs text-gray-500">
+              {new Date(booking.eventDate).toLocaleDateString()}
+            </span>
+          </div>
         </div>
-        <div className="text-green-500 font-semibold">
-          <FaMoneyBillWave className="inline w-4 h-4 mr-1" />
-          TZS {booking.totalAmount}
+        <div className="text-right">
+          <div className="text-lg font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+            <FaMoneyBillWave className="inline w-4 h-4 mr-1 text-green-600" />
+            ${booking.totalAmount?.toFixed(2) || '0.00'}
+          </div>
         </div>
       </div>
-      <div className="flex items-center justify-between mt-2 text-sm text-gray-600">
-        <span>Status: {booking.status}</span>
-        <span>Booked on: {new Date(booking.bookingDate).toLocaleString()}</span>
+      <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+        <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+          booking.status === 'confirmed' ? 'bg-green-100 text-green-700' :
+          booking.status === 'cancelled' ? 'bg-red-100 text-red-700' :
+          'bg-yellow-100 text-yellow-700'
+        }`}>
+          {booking.status}
+        </span>
+        <span className="text-sm text-gray-500">
+          {new Date(booking.bookingDate).toLocaleDateString()}
+        </span>
       </div>
     </div>
   );
@@ -135,35 +162,63 @@ function UserDashboard() {
   if (!user) return <div>Please log in</div>;
 
   return (
-    <div className="container mx-auto p-4">
-      <div className="flex justify-between items-center mb-8">
-        <div className="flex items-center space-x-2">
-          <h2 className="text-3xl font-bold text-gray-800">Welcome, {user.name}</h2>
-          <FaTicketAlt className="w-6 h-6 text-gray-800" />
+    <div className="container mx-auto px-4 py-6 max-w-7xl">
+      {/* Welcome Header */}
+      <div className="mb-8">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="h-12 w-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
+            <FaTicketAlt className="w-6 h-6 text-white" />
+          </div>
+          <div>
+            <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Welcome, {user.name}
+            </h2>
+            <p className="text-gray-600 text-sm">Browse and book your favorite events</p>
+          </div>
         </div>
       </div>
 
-      <div className="space-y-6">
-        <div className="bg-white rounded-lg shadow-xl p-6">
-          <h3 className="text-xl font-semibold text-gray-800 mb-4">Available Events</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {events.length === 0 ? (
-              <p>No events available.</p>
-            ) : (
-              events.map((event) => <EventCard key={event.id} event={event} />)
-            )}
+      <div className="space-y-8">
+        {/* Available Events Section */}
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-gray-100">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="h-10 w-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+              <FaCalendarAlt className="w-5 h-5 text-white" />
+            </div>
+            <h3 className="text-2xl font-bold text-gray-800">Available Events</h3>
           </div>
-        </div>
-        <div className="bg-white rounded-lg shadow-xl p-6">
-          <h3 className="text-xl font-semibold text-gray-800 mb-4">Your Bookings</h3>
-          {userBookings.length === 0 ? (
-            <p>No bookings yet.</p>
+          {events.length === 0 ? (
+            <div className="text-center py-12">
+              <FaCalendarAlt className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+              <p className="text-gray-500 text-lg">No events available at the moment.</p>
+            </div>
           ) : (
-            <ul className="space-y-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {events.map((event) => <EventCard key={event.id} event={event} />)}
+            </div>
+          )}
+        </div>
+
+        {/* Bookings Section */}
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-gray-100">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="h-10 w-10 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg flex items-center justify-center">
+              <FaTicketAlt className="w-5 h-5 text-white" />
+            </div>
+            <h3 className="text-2xl font-bold text-gray-800">Your Bookings</h3>
+          </div>
+          {userBookings.length === 0 ? (
+            <div className="text-center py-12">
+              <FaTicketAlt className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+              <p className="text-gray-500 text-lg mb-2">No bookings yet.</p>
+              <p className="text-gray-400 text-sm">Start booking events to see them here!</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {userBookings.map((booking) => (
                 <BookingCard key={booking.id} booking={booking} />
               ))}
-            </ul>
+            </div>
           )}
         </div>
       </div>

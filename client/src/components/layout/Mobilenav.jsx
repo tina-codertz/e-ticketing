@@ -28,21 +28,21 @@ const MobileNav = ({ user }) => {
   const mobileItems = navItems.slice(0, 4);
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white border-t lg:hidden">
-      <div className="flex items-center justify-around px-2 py-3">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-gray-200 shadow-lg lg:hidden">
+      <div className="flex items-center justify-around px-2 py-2">
         {mobileItems.map((item) => (
           <NavLink
             key={item.path}
             to={item.path}
             className={({ isActive }) =>
-              `flex flex-col items-center gap-1 p-2 rounded-lg transition-colors ${
+              `flex flex-col items-center gap-1 p-2 rounded-xl transition-all duration-200 ${
                 isActive
-                  ? 'text-blue-600'
-                  : 'text-gray-600 hover:text-blue-600'
+                  ? 'text-blue-600 bg-gradient-to-br from-blue-50 to-purple-50'
+                  : 'text-gray-600 hover:text-blue-600 hover:bg-gray-50'
               }`
             }
           >
-            <item.icon size={24} />
+            <item.icon size={22} />
             <span className="text-xs font-medium">{item.label}</span>
           </NavLink>
         ))}

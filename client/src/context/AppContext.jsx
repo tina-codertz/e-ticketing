@@ -1,6 +1,7 @@
 // context/AppContext.jsx
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { ticketsAPI, adminAPI, authAPI } from '../services/api';
 
 const AppContext = createContext(undefined);
 
@@ -126,20 +127,80 @@ export const AppProvider = ({ children }) => {
   const [bookings, setBookings] = useState(initialBookings);
   const [tickets, setTickets] = useState([]);
 
-  // Load initial data from localStorage
+  // Load user from localStorage on mount
   useEffect(() => {
-    const savedUser = localStorage.getItem('currentUser');
-    const savedEvents = localStorage.getItem('events');
-    const savedBookings = localStorage.getItem('bookings');
-    const savedTickets = localStorage.getItem('tickets');
-    const savedUsers = localStorage.getItem('users');
-
-    if (savedUser) setCurrentUser(JSON.parse(savedUser));
-    if (savedEvents) setEvents(JSON.parse(savedEvents));
-    if (savedBookings) setBookings(JSON.parse(savedBookings));
-    if (savedTickets) setTickets(JSON.parse(savedTickets));
-    if (savedUsers) setUsers(JSON.parse(savedUsers));
+    const token = localStorage.getItem('token');
+    const savedUser = localStorage.getItem('user');
+    
+    if (token && savedUser) {
+      try {
+        const userData = JSON.parse(savedUser);
+        setCurrentUser(userData);
+        // Fetch events and bookings from API
+        loadDataFromAPI();
+      } catch (error) {
+        console.error('Error loading user data:', error);
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+      }
+    }
   }, []);
+
+  // Load data from API
+  const loadDataFromAPI = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      // Fetch available tickets/events
+      const eventsData = await ticketsAPI.getAvailableTickets();
+      // Transform backend events to frontend format
+      const transformedEvents = eventsData.map(event => ({
+        id: event.event_id,
+        title: event.name,
+        description: '',
+        category: 'Event',
+        venue: event.location,
+        date: new Date(event.date),
+        time: new Date(event.date).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+        imageUrl: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800&auto=format&fit=crop',
+        featured: false,
+        ticketCategories: [{
+          id: `cat-${event.event_id}`,
+          name: 'Standard Ticket',
+          price: parseFloat(event.price),
+          totalSeats: event.total_tickets,
+          availableSeats: event.available_tickets,
+          description: 'Standard admission ticket'
+        }]
+      }));
+      setEvents(transformedEvents);
+
+      // Fetch user bookings
+      const bookingsData = await ticketsAPI.getUserBookings();
+      // Transform backend bookings to frontend format
+      const transformedBookings = bookingsData.map(booking => ({
+        id: booking.booking_id,
+        userId: booking.user_id,
+        eventId: booking.event_id,
+        eventTitle: booking.event_name,
+        eventDate: new Date(booking.event_date || booking.booking_time),
+        eventVenue: booking.event_location || '',
+        items: [{
+          categoryId: `cat-${booking.event_id}`,
+          categoryName: 'Standard Ticket',
+          quantity: booking.ticket_count,
+          price: parseFloat(booking.price) || 0
+        }],
+        totalAmount: (parseFloat(booking.price) || 0) * booking.ticket_count,
+        status: booking.status || 'confirmed',
+        bookingDate: new Date(booking.booking_time)
+      }));
+      setBookings(transformedBookings);
+    } catch (error) {
+      console.error('Error loading data from API:', error);
+    }
+  };
 
   // Save to localStorage on changes
   useEffect(() => {
@@ -167,18 +228,32 @@ export const AppProvider = ({ children }) => {
   }, [users]);
 
   // Auth functions
-  const login = (email, password) => {
-    const user = users.find(u => u.email === email && u.password === password);
-    if (user) {
-      const { password: _, ...userWithoutPassword } = user;
-      setCurrentUser(userWithoutPassword);
-      return { success: true, user: userWithoutPassword };
+  const login = async (email, password) => {
+    try {
+      const response = await authAPI.login(email, password);
+      const { token, user } = response;
+      const userData = {
+        ...user,
+        id: user.user_id,
+        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name || user.email}`
+      };
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(userData));
+      setCurrentUser(userData);
+      await loadDataFromAPI();
+      return { success: true, user: userData };
+    } catch (error) {
+      return { success: false, error: error.message };
     }
-    return { success: false, error: 'Invalid credentials' };
   };
 
   const logout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     setCurrentUser(null);
+    setEvents([]);
+    setBookings([]);
+    setTickets([]);
   };
 
   const register = (userData) => {
@@ -216,14 +291,19 @@ export const AppProvider = ({ children }) => {
   };
 
   // Booking functions
-  const addBooking = (bookingData) => {
-    const newBooking = {
-      ...bookingData,
-      id: `booking-${uuidv4()}`,
-      bookingDate: new Date()
-    };
-    setBookings(prev => [...prev, newBooking]);
-    return newBooking;
+  const addBooking = async (bookingData) => {
+    try {
+      // Call API to create booking
+      const result = await ticketsAPI.bookTickets(bookingData.eventId, bookingData.items[0].quantity);
+      
+      // Reload bookings from API
+      await loadDataFromAPI();
+      
+      return result;
+    } catch (error) {
+      console.error('Error creating booking:', error);
+      throw error;
+    }
   };
 
   const updateBookingStatus = (id, status) => {
@@ -308,10 +388,14 @@ export const AppProvider = ({ children }) => {
 
   const value = {
     currentUser,
+    setCurrentUser,
     users,
     events,
+    setEvents,
     bookings,
+    setBookings,
     tickets,
+    setTickets,
     
     login,
     logout,
@@ -333,6 +417,7 @@ export const AppProvider = ({ children }) => {
     deleteUser,
     
     updateTicketAvailability,
+    loadDataFromAPI,
   };
 
   return (

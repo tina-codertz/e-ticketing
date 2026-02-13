@@ -4,7 +4,7 @@ import { useApp } from '../../context/AppContext';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
 
-const BookingFlow = ({ event, items, onBack, onComplete }) => {
+const BookingFlow = ({ event, items = [], onBack, onComplete }) => {
   const {
     currentUser,
     addBooking,
@@ -18,15 +18,38 @@ const BookingFlow = ({ event, items, onBack, onComplete }) => {
   const [cardName, setCardName] = useState('');
   const [bookingId, setBookingId] = useState('');
 
-  const totalAmount = items.reduce(
+  const safeItems = Array.isArray(items) ? items : [];
+
+  const totalAmount = safeItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
 
-  const totalTickets = items.reduce(
+  const totalTickets = safeItems.reduce(
     (sum, item) => sum + item.quantity,
     0
   );
+
+  // If required data is missing, show a friendly fallback instead of crashing
+  if (!event || safeItems.length === 0) {
+    return (
+      <div className="max-w-2xl mx-auto bg-white rounded shadow p-8 text-center">
+        <h3 className="text-xl font-semibold mb-2">No tickets selected</h3>
+        <p className="text-gray-600 mb-4">
+          Please choose an event and tickets before proceeding to payment.
+        </p>
+        {onBack && (
+          <button
+            onClick={onBack}
+            className="inline-flex items-center px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to events
+          </button>
+        )}
+      </div>
+    );
+  }
 
   const handlePayment = (e) => {
     e.preventDefault();

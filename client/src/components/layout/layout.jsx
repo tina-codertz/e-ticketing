@@ -1,29 +1,22 @@
 // components/layout/Layout.jsx
 import React, { useState } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
+import { Outlet } from 'react-router-dom';
+import { useApp } from '../../context/AppContext';
 
-import Sidebar from './sidebar';
+import Sidebar from './Sidebar';
 import Header from './header';
 import Footer from './footer';
+import MobileNav from './Mobilenav';
 
-const Layout = ({ user, setUser }) => {
+const Layout = () => {
+  const { currentUser } = useApp();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setUser(null);
-    toast.success('Logged out successfully');
-    navigate('/login');
-  };
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
   const closeSidebar = () => setSidebarOpen(false);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 pb-20 lg:pb-0">
       {/* Mobile Sidebar Overlay */}
       {sidebarOpen && (
         <div
@@ -32,23 +25,25 @@ const Layout = ({ user, setUser }) => {
         />
       )}
 
-      {/* Sidebar */}
-      <Sidebar user={user} onClose={closeSidebar} />
+      {/* Sidebar (desktop + mobile drawer) */}
+      <Sidebar user={currentUser} onClose={closeSidebar} sidebarOpen={sidebarOpen} />
 
       {/* Main Content Area */}
       <div className="lg:pl-64">
         <Header
           sidebarOpen={sidebarOpen}
           toggleSidebar={toggleSidebar}
-          user={user}
-          onLogout={handleLogout}
+          user={currentUser}
         />
 
-        <main className="p-6">
+        <main className="p-4 md:p-6 min-h-[calc(100vh-200px)]">
           <Outlet />
         </main>
 
         <Footer />
+
+        {/* Mobile Bottom Navigation */}
+        <MobileNav user={currentUser} />
       </div>
     </div>
   );
