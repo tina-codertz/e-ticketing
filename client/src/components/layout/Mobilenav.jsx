@@ -1,4 +1,3 @@
-// components/layout/MobileNav.jsx
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import {
@@ -25,7 +24,7 @@ const MobileNav = ({ user }) => {
 
   const navItems = user?.role === 'admin' ? adminNavItems : userNavItems;
 
-  // Limit to 4-5 items max for mobile bottom nav
+  
   const mobileItems = navItems.slice(0, 4);
 
   return (

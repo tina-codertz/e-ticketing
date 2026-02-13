@@ -6,7 +6,8 @@ import { toast } from 'sonner';
 import Sidebar from './sidebar';
 import Header from './header';
 import Footer from './footer';
-import MobileNav from './MobileNav';   // ← new import
+import MobileNav from './MobileNav';  
+
 
 const Layout = ({ user, setUser }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
