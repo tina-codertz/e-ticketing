@@ -135,7 +135,7 @@ const UserManagement = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-900 to-blue-800 text-white rounded-2xl p-6">
+      <div className="bg-blue-900 text-white rounded-2xl p-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold mb-2">User Management</h1>

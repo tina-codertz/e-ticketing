@@ -6,11 +6,11 @@ const Footer = () => {
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="flex items-center gap-2 mb-4 md:mb-0">
-            <div className="h-6 w-6 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+            <div className="h-6 w-6 bg-blue-900 rounded-lg flex items-center justify-center">
               <span className="text-white text-xs font-bold">E</span>
             </div>
             <p className="text-sm text-gray-600 font-medium">
-              © {new Date().getFullYear()} e-ticket. All rights reserved.
+              © {new Date().getFullYear()} e-Ticketing. All rights reserved.
             </p>
           </div>
           <div className="flex gap-6 items-center">

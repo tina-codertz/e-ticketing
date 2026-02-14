@@ -79,7 +79,7 @@ export default function BookingManagement() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-gradient-to-r from-gray-900 to-gray-800 text-white rounded-2xl p-6">
+      <div className="bg-blue-900 text-white rounded-2xl p-6">
         <div className="flex justify-between items-start">
           <div>
             <h1 className="text-3xl font-bold mb-2">Booking Management</h1>

@@ -184,7 +184,7 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-gradient-to-r from-gray-900 to-gray-800 text-white rounded-2xl p-6 shadow-xl">
+      <div className="bg-blue-900 text-white rounded-2xl p-6 shadow-xl">
         <h1 className="text-3xl font-bold mb-2">Dashboard Overview</h1>
         <p className="text-gray-300">Welcome back! Here's what's happening with your events today.</p>
       </div>
