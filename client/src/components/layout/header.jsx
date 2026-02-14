@@ -10,12 +10,8 @@ const Header = ({ sidebarOpen, toggleSidebar, user }) => {
          
 
           <div className="relative flex-1 max-w-xl">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search events, tickets..."
-              className="w-full border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-            />
+            <h1 className='text-3xl font-bold text-blue-900'>Admin Dashboard</h1>
+           
           </div>
         </div>
 

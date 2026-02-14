@@ -300,7 +300,7 @@ const EventManagement = () => {
               placeholder="Search events by title, description, or venue..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full border border-gray-300 rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full border border-gray-300 rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
           </div>
@@ -309,7 +309,7 @@ const EventManagement = () => {
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               {categories.map(cat => (
                 <option key={cat} value={cat}>
@@ -321,7 +321,7 @@ const EventManagement = () => {
             <div className="flex border border-gray-300 rounded-xl overflow-hidden">
               <button
                 onClick={() => setViewMode('grid')}
-                className={`px-4 py-3 ${viewMode === 'grid' ? 'bg-purple-100 text-purple-700' : 'bg-white'}`}
+                className={`px-4 py-3 ${viewMode === 'grid' ? 'bg-blue-100 text-purple-700' : 'bg-white'}`}
               >
                 Grid
               </button>
@@ -337,23 +337,23 @@ const EventManagement = () => {
 
         {/* Stats Summary */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-purple-50 border border-purple-100 rounded-xl p-4">
-            <p className="text-sm text-purple-600">Total Events</p>
-            <p className="text-2xl font-bold text-purple-700">{events.length}</p>
+          <div className="bg-blue-100 border border-blue-500 rounded-xl p-4">
+            <p className="text-sm text-blue-600">Total Events</p>
+            <p className="text-2xl font-bold text-blue-700">{events.length}</p>
           </div>
-          <div className="bg-blue-50 border border-blue-100 rounded-xl p-4">
+          <div className="bg-blue-100 border border-blue-500 rounded-xl p-4">
             <p className="text-sm text-blue-600">Active Events</p>
             <p className="text-2xl font-bold text-blue-700">
               {events.filter(e => new Date(e.date) >= new Date()).length}
             </p>
           </div>
-          <div className="bg-green-50 border border-green-100 rounded-xl p-4">
+          <div className="bg-blue-100 border border-blue-500 rounded-xl p-4">
             <p className="text-sm text-green-600">Featured</p>
             <p className="text-2xl font-bold text-green-700">
               {events.filter(e => e.featured).length}
             </p>
           </div>
-          <div className="bg-orange-50 border border-orange-100 rounded-xl p-4">
+          <div className="bg-blue-100 border border-blue-500 rounded-xl p-4">
             <p className="text-sm text-orange-600">Today's Events</p>
             <p className="text-2xl font-bold text-orange-700">
               {events.filter(e => format(new Date(e.date), 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd')).length}
@@ -429,7 +429,7 @@ const EventManagement = () => {
                       </div>
                       <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
                         <div
-                          className="h-2 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full transition-all duration-500"
+                          className="h-2 bg-blue-900 rounded-full transition-all duration-500"
                           style={{ width: `${stats.percentage}%` }}
                         />
                       </div>
@@ -445,7 +445,7 @@ const EventManagement = () => {
                       <div className="flex gap-2">
                         <button
                           onClick={() => openDialog(event)}
-                          className="px-3 py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors flex items-center gap-1"
+                          className="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-1"
                         >
                           <Edit size={14} />
                           Edit
@@ -883,7 +883,7 @@ const EventManagement = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                  className="px-6 py-3 bg-blue-900 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 >
                   {editingEvent ? 'Update Event' : 'Create Event'}
                 </button>
