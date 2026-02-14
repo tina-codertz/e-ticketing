@@ -1,4 +1,5 @@
-const pool = require('../database/db');
+
+import pool from '../database/db.js';
 
 const BookingModel = {
   createBooking: async (client, userId, eventId, ticketCount) => {

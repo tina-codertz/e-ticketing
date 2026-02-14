@@ -5,126 +5,12 @@ import { ticketsAPI, adminAPI, authAPI } from '../services/api';
 
 const AppContext = createContext(undefined);
 
-// // Mock data for initial state
-const initialUsers = [
-  {
-    id: 'user-1',
-    name: 'Admin User',
-    email: 'admin@example.com',
-    phone: '+1234567890',
-    role: 'admin',
-    createdAt: new Date('2024-01-01')
-  },
-  {
-    id: 'user-2',
-    name: 'John Doe',
-    email: 'john@example.com',
-    phone: '+1987654321',
-    role: 'user',
-    createdAt: new Date('2024-02-01')
-  }
-];
-
-const initialEvents = [
-  {
-    id: 'event-1',
-    title: 'Summer Music Festival',
-    description: 'Annual summer music festival featuring top artists from around the world. Join us for an unforgettable experience with multiple stages, food vendors, and art installations.',
-    category: 'Music',
-    venue: 'Central Park',
-    date: new Date('2024-07-15'),
-    time: '18:00',
-    imageUrl: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800&auto=format&fit=crop',
-    featured: true,
-    ticketCategories: [
-      {
-        id: 'cat-1-1',
-        name: 'General Admission',
-        price: 75,
-        totalSeats: 500,
-        availableSeats: 320,
-        description: 'Access to all festival areas'
-      },
-      {
-        id: 'cat-1-2',
-        name: 'VIP Pass',
-        price: 150,
-        totalSeats: 100,
-        availableSeats: 45,
-        description: 'VIP lounge access + fast track entry'
-      },
-      {
-        id: 'cat-1-3',
-        name: 'VIP Plus',
-        price: 250,
-        totalSeats: 50,
-        availableSeats: 12,
-        description: 'All VIP benefits + backstage tour'
-      }
-    ],
-    createdAt: new Date('2024-01-15')
-  },
-  {
-    id: 'event-2',
-    title: 'Tech Conference 2024',
-    description: 'The premier technology conference bringing together innovators, entrepreneurs, and industry leaders. Features keynote speeches, workshops, and networking opportunities.',
-    category: 'Technology',
-    venue: 'Convention Center',
-    date: new Date('2024-09-20'),
-    time: '09:00',
-    imageUrl: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w-800&auto=format&fit=crop',
-    featured: false,
-    ticketCategories: [
-      {
-        id: 'cat-2-1',
-        name: 'Standard Pass',
-        price: 299,
-        totalSeats: 300,
-        availableSeats: 210,
-        description: 'Access to all conference sessions'
-      },
-      {
-        id: 'cat-2-2',
-        name: 'Premium Pass',
-        price: 499,
-        totalSeats: 100,
-        availableSeats: 65,
-        description: 'Includes lunch and networking events'
-      }
-    ],
-    createdAt: new Date('2024-02-10')
-  }
-];
-
-const initialBookings = [
-  {
-    id: 'booking-1',
-    userId: 'user-2',
-    eventId: 'event-1',
-    eventTitle: 'Summer Music Festival',
-    eventDate: new Date('2024-07-15'),
-    eventVenue: 'Central Park',
-    items: [
-      {
-        categoryId: 'cat-1-1',
-        categoryName: 'General Admission',
-        quantity: 2,
-        price: 75
-      }
-    ],
-    totalAmount: 150,
-    status: 'confirmed',
-    paymentMethod: 'Credit Card',
-    transactionId: 'TXN-001',
-    bookingDate: new Date('2024-03-01')
-  }
-];
 
 export const AppProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
-  const [users, setUsers] = useState(initialUsers);
-  const [events, setEvents] = useState(initialEvents);
-  const [bookings, setBookings] = useState(initialBookings);
+  const [users, setUsers] = useState([]);
+  const [events, setEvents] = useState([]);
+  const [bookings, setBookings] = useState([]);
   const [tickets, setTickets] = useState([]);
 
   // Load user from localStorage on mount
