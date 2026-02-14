@@ -42,10 +42,10 @@ export default function BookingManagement() {
   const getUser = id => users.find(u => u.id === id);
 
   const statusStyles = {
-    confirmed: { bg: 'bg-green-100', text: 'text-green-700', border: 'border-green-200' },
-    paid: { bg: 'bg-blue-100', text: 'text-blue-700', border: 'border-blue-200' },
-    pending: { bg: 'bg-yellow-100', text: 'text-yellow-700', border: 'border-yellow-200' },
-    cancelled: { bg: 'bg-red-100', text: 'text-red-700', border: 'border-red-200' }
+    confirmed: { bg: 'bg-green-100', text: 'text-green-700', border: 'border-blue-500' },
+    paid: { bg: 'bg-blue-100', text: 'text-blue-700', border: 'border-blue-500' },
+    pending: { bg: 'bg-yellow-100', text: 'text-yellow-700', border: 'border-blue-500' },
+    cancelled: { bg: 'bg-red-100', text: 'text-red-700', border: 'border-blue-500' }
   };
 
   const handleCancelBooking = id => {
@@ -96,7 +96,7 @@ export default function BookingManagement() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-2xl shadow-lg p-6 space-y-4">
+      <div className="bg-white rounded-2xl shadow-lg border border-blue-500 p-6 space-y-4">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />

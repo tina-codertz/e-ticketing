@@ -270,7 +270,7 @@ const EventManagement = () => {
     return { totalSeats, soldSeats, revenue, percentage: (soldSeats / totalSeats) * 100 };
   };
 
-  // Removed ReactQuill modules - using textarea instead
+
 
   return (
     <div className="space-y-6">
@@ -292,7 +292,7 @@ const EventManagement = () => {
       </div>
 
       {/* Filters and Stats */}
-      <div className="bg-white rounded-2xl shadow-lg p-6">
+      <div className="bg-white rounded-2xl shadow-lg border border-blue-500 p-6">
         <div className="flex flex-col md:flex-row gap-4 mb-6">
           <div className="relative flex-1">
             <input

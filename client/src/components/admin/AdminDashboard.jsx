@@ -194,7 +194,7 @@ export default function AdminDashboard() {
         {statsCards.map((stat, i) => (
           <div
             key={i}
-            className="bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow duration-300"
+            className="bg-white rounded-xl shadow-lg p-6 border border-blue-500 hover:shadow-xl transition-shadow duration-300"
           >
             <div className="flex justify-between items-start">
               <div>
@@ -227,7 +227,7 @@ export default function AdminDashboard() {
       {/* Charts Section */}
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Revenue by Event */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+        <div className="bg-white rounded-2xl shadow-lg p-6 border border-blue-500">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-lg font-semibold text-gray-800">Top Events by Revenue</h2>
             <span className="text-sm text-gray-500">{revenueByEvent.length} events</span>
@@ -259,7 +259,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Sales Trend */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+        <div className="bg-white rounded-2xl shadow-lg p-6 border border-blue-500">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-lg font-semibold text-gray-800">Sales Trend (Last 7 Days)</h2>
             <span className="text-sm text-gray-500">Daily revenue</span>
@@ -296,7 +296,7 @@ export default function AdminDashboard() {
       {/* Bottom Section */}
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Bookings by Status */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+        <div className="bg-white rounded-2xl shadow-lg p-6 border border-blue-500">
           <h2 className="text-lg font-semibold text-gray-800 mb-6">Bookings by Status</h2>
           <div className="flex flex-col items-center">
             <ResponsiveContainer width="100%" height={250}>
@@ -331,7 +331,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Upcoming Events */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 lg:col-span-2">
+        <div className="bg-white rounded-2xl shadow-lg p-6 border border-blue-500 lg:col-span-2">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-lg font-semibold text-gray-800">Upcoming Events</h2>
             <span className="text-sm text-gray-500">{upcomingEvents.length} events</span>
