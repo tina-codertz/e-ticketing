@@ -423,8 +423,7 @@ export const AppProvider = ({ children }) => {
 
   // User management functions
   const updateUser = async (id, data) => {
-    // Backend doesn't have update user endpoint
-    // Update locally for now
+
     setUsers(prev => prev.map(user => 
       user.id === id ? { ...user, ...data } : user
     ));
@@ -432,8 +431,7 @@ export const AppProvider = ({ children }) => {
     if (currentUser?.id === id) {
       setCurrentUser(prev => ({ ...prev, ...data }));
     }
-    
-    // Reload users from API
+
     await loadDataFromAPI();
   };
 
@@ -442,8 +440,7 @@ export const AppProvider = ({ children }) => {
   };
 
   const deleteUser = async (id) => {
-    // Backend doesn't have delete user endpoint
-    // Update locally for now - in production, add API endpoint
+ 
     setUsers(prev => prev.filter(user => user.id !== id));
     if (currentUser?.id === id) {
       setCurrentUser(null);

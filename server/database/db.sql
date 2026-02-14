@@ -42,10 +42,3 @@ CREATE INDEX idx_events_event_id ON events(event_id);
 CREATE INDEX idx_bookings_user_id ON bookings(user_id);
 CREATE INDEX idx_bookings_event_id ON bookings(event_id);
 
--- Sample data
-INSERT INTO users (name, email, password_hash, role, created_at)
-VALUES ('Admin User', 'admin@example.com', '$2b$10$examplehashedpassword', 'admin', NOW());
-
-INSERT INTO events (name, date, location, total_tickets, available_tickets, price)
-VALUES ('Concert A', '2025-07-01 18:00:00', 'Venue A', 100, 100, 50.00),
-       ('Movie B', '2025-07-02 20:00:00', 'Cinema B', 50, 50, 15.00);
