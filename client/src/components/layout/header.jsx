@@ -10,7 +10,7 @@ const Header = ({ sidebarOpen, toggleSidebar, user }) => {
          
 
           <div className="relative flex-1 max-w-xl">
-            <h1 className='text-3xl font-bold text-blue-900'>Admin Dashboard</h1>
+            <h1 className='text-3xl font-bold text-blue-900'>Dashboard</h1>
            
           </div>
         </div>

@@ -64,38 +64,8 @@ const AuthForm = () => {
     }
   };
 
-  const handleDemoLogin = async (role) => {
-    // Demo login - using test credentials
-    const demoCredentials = {
-      user: { email: 'user@example.com', password: 'password123' },
-      admin: { email: 'admin@example.com', password: 'admin123' }
-    };
-    
-    const creds = demoCredentials[role];
-    if (!creds) return;
-    
-    setLoading(true);
-    try {
-      const response = await authAPI.login(creds.email, creds.password);
-      const { token, user } = response;
+
       
-      localStorage.setItem('token', token);
-      const userData = {
-        ...user,
-        id: user.user_id,
-        avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name || user.email}`
-      };
-      localStorage.setItem('user', JSON.stringify(userData));
-      setCurrentUser(userData);
-      
-      toast.success(`Signed in as ${user.name}`);
-      navigate(user.role === 'admin' ? '/dashboard' : '/');
-    } catch (error) {
-      toast.error('Demo login failed. Please register or use valid credentials.');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center p-4">
@@ -103,13 +73,13 @@ const AuthForm = () => {
         {/* Logo/Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
-            <div className="h-12 w-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
+            <div className="h-12 w-12 bg-blue-900 rounded-xl flex items-center justify-center">
               <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
               </svg>
             </div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              e-ticket
+            <h1 className="text-3xl font-bold bg-blue-900 bg-clip-text text-transparent">
+              e-Ticketing
             </h1>
           </div>
           <p className="text-gray-600">
@@ -133,7 +103,7 @@ const AuthForm = () => {
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     className="w-full border border-gray-300 rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="John Doe"
+                    placeholder="Christina Kimario"
                   />
                 </div>
               </div>
@@ -151,7 +121,7 @@ const AuthForm = () => {
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   className="w-full border border-gray-300 rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="you@example.com"
+                  placeholder="christina@example.com"
                 />
               </div>
             </div>
@@ -168,7 +138,7 @@ const AuthForm = () => {
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     className="w-full border border-gray-300 rounded-xl pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="+1 (555) 123-4567"
+                    placeholder="+255 712 345 678"
                   />
                 </div>
               </div>
@@ -209,7 +179,7 @@ const AuthForm = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-xl font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
+              className="w-full bg-blue-800 text-white py-3 rounded-xl font-semibold hover:bg-blue-900 transition-opacity disabled:opacity-50"
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
@@ -222,30 +192,8 @@ const AuthForm = () => {
             </button>
           </form>
 
-          {/* Divider */}
-          <div className="my-6 flex items-center">
-            <div className="flex-1 border-t border-gray-300"></div>
-            <span className="px-4 text-sm text-gray-500">OR</span>
-            <div className="flex-1 border-t border-gray-300"></div>
-          </div>
-
-          {/* Demo Buttons */}
-          <div className="space-y-3">
-            <button
-              onClick={() => handleDemoLogin('user')}
-              disabled={loading}
-              className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 rounded-xl font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
-            >
-              Demo User Login
-            </button>
-            <button
-              onClick={() => handleDemoLogin('admin')}
-              disabled={loading}
-              className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-3 rounded-xl font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
-            >
-              Demo Admin Login
-            </button>
-          </div>
+       
+         
 
           {/* Toggle between login/register */}
           <div className="mt-6 text-center">

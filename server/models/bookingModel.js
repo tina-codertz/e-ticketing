@@ -1,7 +1,7 @@
 
 import pool from '../database/db.js';
 
-const BookingModel = {
+export const BookingModel = {
   createBooking: async (client, userId, eventId, ticketCount) => {
     await client.query(
       'INSERT INTO bookings (user_id, event_id, ticket_count, booking_time, status) VALUES ($1, $2, $3, NOW(), $4)',
@@ -32,4 +32,3 @@ const BookingModel = {
   }
 };
 
-module.exports = BookingModel;
