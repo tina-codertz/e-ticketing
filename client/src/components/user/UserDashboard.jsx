@@ -124,11 +124,11 @@ function UserDashboard() {
       {/* Welcome Header */}
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-2">
-          <div className="h-12 w-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
+          <div className="h-12 w-12 bg-blue-900 rounded-xl flex items-center justify-center">
             <FaTicketAlt className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <h2 className="text-3xl font-bold bg-blue-600 bg-clip-text text-transparent">
               Welcome, {user.name}
             </h2>
             <p className="text-gray-600 text-sm">Browse and book your favorite events</p>
@@ -200,7 +200,7 @@ function UserDashboard() {
           {/* Events Grid */}
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 border border-gray-100">
             <div className="flex items-center gap-3 mb-6">
-              <div className="h-10 w-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+              <div className="h-10 w-10 bg-blue-600 rounded-lg flex items-center justify-center">
                 <FaCalendarAlt className="w-5 h-5 text-white" />
               </div>
               <h3 className="text-2xl font-bold text-gray-800">Available Events</h3>
@@ -261,7 +261,7 @@ function UserDashboard() {
                 <p className="text-gray-400 text-sm mb-4">Start booking events to see them here!</p>
                 <button
                   onClick={() => setViewMode('events')}
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl font-semibold hover:opacity-90 transition-opacity"
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:opacity-90 transition-opacity"
                 >
                   <FaCalendarAlt className="w-4 h-4" />
                   Browse Events

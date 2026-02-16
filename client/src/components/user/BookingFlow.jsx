@@ -78,7 +78,7 @@ const BookingFlow = ({ event: propEvent, items: propItems = [], onBack, onComple
               navigate('/');
             }
           }}
-          className="inline-flex items-center px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:opacity-90 transition-opacity font-semibold"
+          className="inline-flex items-center px-6 py-3 rounded-xl bg-blue-600 text-white hover:opacity-90 transition-opacity font-semibold"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to events
