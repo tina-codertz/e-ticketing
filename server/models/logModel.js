@@ -1,4 +1,4 @@
-const pool = require('../database/db');
+import pool from '../database/db.js';
 
 const LogModel = {
   createLog: async (userId, action) => {
@@ -14,4 +14,4 @@ const LogModel = {
   }
 };
 
-module.exports = LogModel;
+export default LogModel;

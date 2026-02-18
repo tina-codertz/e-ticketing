@@ -1,6 +1,7 @@
+import { Pool } from 'pg';
+import dotenv from 'dotenv';
 
-const { Pool } = require('pg');
-require('dotenv').config();
+dotenv.config();
 
 // Create a connection pool
 const pool = new Pool({
@@ -30,4 +31,4 @@ pool.connect((err, client, release) => {
   release();
 });
 
-module.exports = pool;
+export default pool;

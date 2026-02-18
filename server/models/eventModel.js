@@ -1,4 +1,4 @@
-const pool = require('../database/db');
+import pool from '../database/db.js';
 
 const EventModel = {
   getAvailableTickets: async () => {
@@ -53,4 +53,4 @@ const EventModel = {
   }
 };
 
-module.exports = EventModel;
+export default EventModel;

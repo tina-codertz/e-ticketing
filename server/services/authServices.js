@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
-const jwt = require('jsonwebtoken');
-const UserModel = require('../models/userModels');
-const LogModel = require('../models/logModel');
+import jwt from 'jsonwebtoken';
+import { UserModel } from '../models/userModels.js';
+import LogModel from '../models/logModel.js';
 
 const AuthService = {
   register: async (name, email, password) => {
@@ -10,7 +10,7 @@ const AuthService = {
 
     const passwordHash = await bcrypt.hash(password, 10);
     const user = await UserModel.createUser(name, email, passwordHash);
-    const token = jwt.sign({ user_id: user.user_id, email: user.email, role: user.role }, process.env.JWT_SECRET);
+    const token = jwt.sign({ user_id: user.user_id, email: user.email, role: user.role }, process.env.JWT_SECRET, { expiresIn: '24h' });
     await LogModel.createLog(user.user_id, 'User registered');
     return { token, user };
   },
@@ -20,7 +20,7 @@ const AuthService = {
     if (!user || !(await bcrypt.compare(password, user.password_hash))) {
       throw new Error('Invalid credentials');
     }
-    const token = jwt.sign({ user_id: user.user_id, email: user.email, role: user.role }, process.env.JWT_SECRET);
+    const token = jwt.sign({ user_id: user.user_id, email: user.email, role: user.role }, process.env.JWT_SECRET, { expiresIn: '24h' });
     await LogModel.createLog(user.user_id, 'User logged in');
     return { token, user };
   },
@@ -32,4 +32,4 @@ const AuthService = {
   }
 };
 
-module.exports = AuthService;
+export default AuthService;

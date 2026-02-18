@@ -1,7 +1,7 @@
-const pool = require('../database/db');
-const EventModel = require('../models/eventModel');
-const BookingModel = require('../models/bookingModel');
-const LogModel = require('../models/logModel');
+import pool from '../database/db.js';
+import EventModel from '../models/eventModel.js';
+import { BookingModel } from '../models/bookingModel.js';
+import LogModel from '../models/logModel.js';
 
 const TicketService = {
   getAvailableTickets: async () => {
@@ -37,4 +37,4 @@ const TicketService = {
   }
 };
 
-module.exports = TicketService;
+export default TicketService;

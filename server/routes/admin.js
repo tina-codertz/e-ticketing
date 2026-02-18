@@ -1,6 +1,6 @@
 import express from 'express';
-const AdminController = require('../controllers/adminController');
-const { authenticateToken, isAdmin } = require('../middleware/auth');
+import AdminController from '../controllers/adminController.js';
+import { authenticateToken, isAdmin } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -13,4 +13,4 @@ router.post('/tickets', authenticateToken, isAdmin, AdminController.addEvent);
 router.delete('/events/:id', authenticateToken, isAdmin, AdminController.deleteTicket);
 router.get('/logs', authenticateToken, isAdmin, AdminController.getAllLogs);
 
-module.exports = router;
+export default router;
