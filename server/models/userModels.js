@@ -1,4 +1,4 @@
-const pool = require('../database/db');
+import pool from '../database/db.js';
 
 export const UserModel = {
   createUser: async (name, email, passwordHash, role = 'user') => {

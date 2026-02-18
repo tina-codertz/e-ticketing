@@ -1,6 +1,6 @@
-const EventModel = require('../models/eventModel');
-const UserModel = require('../models/userModels');
-const LogModel = require('../models/logModel');
+import EventModel from '../models/eventModel.js';
+import { UserModel } from '../models/userModels.js';
+import LogModel from '../models/logModel.js';
 
 const AdminService = {
   getAllUsers: async () => {
@@ -31,20 +31,15 @@ const AdminService = {
   },
 
   deleteTicket: async (id) => {
-    try {
-      // First check if the ticket exists
-      const ticket = await EventModel.findEventById(id);
-      if (!ticket) {
-        throw new Error(`Ticket with ID ${id} not found`);
-      }
-
-      // Delete the ticket
-      await EventModel.deleteEvent(id);
-      return { message: 'Ticket deleted successfully', data: ticket };
-    } catch (err) {
-      console.error('Error deleting ticket:', err);
-      throw new Error(`Failed to delete ticket: ${err.message}`);
+    // First check if the ticket exists
+    const ticket = await EventModel.findEventById(id);
+    if (!ticket) {
+      throw new Error(`Ticket with ID ${id} not found`);
     }
+
+    // Delete the ticket
+    await EventModel.deleteEvent(id);
+    return { message: 'Ticket deleted successfully', data: ticket };
   },
 
   getAllLogs: async () => {
@@ -52,4 +47,4 @@ const AdminService = {
   }
 };
 
-module.exports = AdminService;
+export default AdminService;

@@ -1,4 +1,5 @@
-const AdminService = require('./../services/adminServices');
+import AdminService from '../services/adminServices.js';
+import { validateRequired, validatePositiveNumber } from '../utils/validation.js';
 
 const AdminController = {
   getAllUsers: async (req, res) => {
@@ -61,6 +62,24 @@ const AdminController = {
   addEvent: async (req, res) => {
     try {
       const { name, date, location, total_tickets, price } = req.body;
+      
+      // Validate inputs
+      if (!validateRequired(name)) {
+        return res.status(400).json({ message: 'Event name is required' });
+      }
+      if (!validateRequired(date)) {
+        return res.status(400).json({ message: 'Event date is required' });
+      }
+      if (!validateRequired(location)) {
+        return res.status(400).json({ message: 'Event location is required' });
+      }
+      if (!validatePositiveNumber(total_tickets)) {
+        return res.status(400).json({ message: 'Total tickets must be a positive number' });
+      }
+      if (!validatePositiveNumber(price)) {
+        return res.status(400).json({ message: 'Price must be a positive number' });
+      }
+      
       const result = await AdminService.addEvent(name, date, location, total_tickets, price, req.user.user_id, req.app.get('io'));
       res.json(result);
     } catch (err) {
@@ -78,8 +97,6 @@ const AdminController = {
       const result = await AdminService.deleteTicket(id);
       res.status(200).json(result);
     } catch (err) {
-      console.error('Error in deleteTicket controller:', err);
-      
       if (err.message.includes('not found')) {
         return res.status(404).json({ message: err.message });
       }
@@ -101,4 +118,4 @@ const AdminController = {
   }
 };
 
-module.exports = AdminController;
+export default AdminController;

@@ -1,4 +1,5 @@
-const TicketService = require('../services/ticketService');
+import TicketService from '../services/ticketService.js';
+import { validatePositiveNumber, validateRequired } from '../utils/validation.js';
 
 const TicketController = {
   getAvailableTickets: async (req, res) => {
@@ -12,6 +13,15 @@ const TicketController = {
   bookTickets: async (req, res) => {
     try {
       const { event_id, ticket_count } = req.body;
+      
+      // Validate inputs
+      if (!validateRequired(event_id)) {
+        return res.status(400).json({ message: 'Event ID is required' });
+      }
+      if (!validatePositiveNumber(ticket_count)) {
+        return res.status(400).json({ message: 'Ticket count must be a positive number' });
+      }
+      
       const result = await TicketService.bookTickets(req.user.user_id, event_id, ticket_count, req.app.get('io'));
       res.json(result);
     } catch (err) {
@@ -29,4 +39,4 @@ const TicketController = {
   }
 };
 
-module.exports = TicketController;
+export default TicketController;

@@ -1,10 +1,10 @@
 import express from 'express';
-const http = require('http');
-const { Server } = require('socket.io');
-const cors = require('cors');
-const authRoutes = require('./routes/auth');
-const ticketRoutes = require('./routes/tickets');
-const adminRoutes = require('./routes/admin');
+import http from 'http';
+import { Server } from 'socket.io';
+import cors from 'cors';
+import authRoutes from './routes/auth.js';
+import ticketRoutes from './routes/tickets.js';
+import adminRoutes from './routes/admin.js';
 
 const app = express();
 const server = http.createServer(app);
