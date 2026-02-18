@@ -325,6 +325,6 @@ This project is licensed under the ISC License.
 
 ---
 
-**Note:** This is a learning project. For production use, ensure proper security measures, environment configurations, and testing are in place.
+
 
 
