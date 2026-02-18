@@ -1,4 +1,4 @@
-const express = require('express');
+import express from 'express';
 const AdminController = require('../controllers/adminController');
 const { authenticateToken, isAdmin } = require('../middleware/auth');
 

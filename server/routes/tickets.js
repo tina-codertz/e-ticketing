@@ -1,4 +1,4 @@
-const express = require('express');
+import express from 'express';
 const TicketController = require('../controllers/ticketControllers');
 const { authenticateToken } = require('../middleware/auth');
 
