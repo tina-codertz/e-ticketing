@@ -1,7 +1,8 @@
 // Basic input validation utilities
 
 export const validateEmail = (email) => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  // More robust email validation
+  const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
   return emailRegex.test(email);
 };
 
@@ -11,7 +12,11 @@ export const validatePassword = (password) => {
 };
 
 export const validateRequired = (value) => {
-  return value !== null && value !== undefined && value !== '';
+  // Treat empty strings as invalid, but allow 0 and false
+  if (typeof value === 'string') {
+    return value.trim() !== '';
+  }
+  return value !== null && value !== undefined;
 };
 
 export const validatePositiveNumber = (value) => {

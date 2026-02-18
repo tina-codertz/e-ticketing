@@ -32,6 +32,7 @@ const AuthController = {
       if (!validateEmail(email)) {
         return res.status(400).json({ message: 'Valid email is required' });
       }
+      // For login, we only need to verify password exists (not strength requirements)
       if (!validateRequired(password)) {
         return res.status(400).json({ message: 'Password is required' });
       }
