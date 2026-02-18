@@ -1,6 +1,6 @@
 CREATE DATABASE ticketing_db;
 
--- \c ticketing_db;
+--creating the tables for the ticketing system
 
 CREATE TABLE users (
   user_id SERIAL PRIMARY KEY,

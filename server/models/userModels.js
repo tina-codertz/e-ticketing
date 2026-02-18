@@ -1,6 +1,6 @@
 const pool = require('../database/db');
 
-const UserModel = {
+export const UserModel = {
   createUser: async (name, email, passwordHash, role = 'user') => {
     const result = await pool.query(
       'INSERT INTO users (name, email, password_hash, role, created_at) VALUES ($1, $2, $3, $4, NOW()) RETURNING user_id, name, email, role',
@@ -25,4 +25,3 @@ const UserModel = {
   }
 };
 
-module.exports = UserModel;

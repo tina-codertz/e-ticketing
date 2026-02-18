@@ -18,4 +18,3 @@ export const isAdmin = (req, res, next) => {
   next();
 };
 
-// module.exports = { authenticateToken, isAdmin };
