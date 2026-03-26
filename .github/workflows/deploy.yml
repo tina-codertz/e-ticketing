@@ -13,18 +13,19 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Debug key
+      - name: Test Key Format
         run: |
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" | head -n 1
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" | wc -l
 
       - name: Deploy to Server
-        uses: appleboy/ssh-action@v0.1.10
+        uses: appleboy/ssh-action@v0.1.17
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
           script: |
             cd ~/e-ticketing
             git pull origin main
-            docker-compose down
-            docker-compose up -d --build
+            sudo docker-compose down
+            sudo docker-compose up -d --build
