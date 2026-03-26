@@ -10,19 +10,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ Checkout your repo
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Debug Key Lines
+      # 2️⃣ Setup SSH key correctly
+      - name: Setup SSH key
         run: |
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" | wc -l
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa.pub
+          chmod 600 ~/.ssh/id_rsa.pub
 
+      # 3️⃣ Optional: test SSH connection before deploying
+      - name: Test SSH Connection
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa.pub ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "echo Connected successfully"
+
+      # 4️⃣ Deploy using appleboy/ssh-action
       - name: Deploy to Server
         uses: appleboy/ssh-action@v1.2.4
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          key_path: ~/.ssh/id_rsa.pub
           port: 22
           script: |
             cd ~/e-ticketing
